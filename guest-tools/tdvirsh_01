@@ -294,12 +294,13 @@ import_base_image_to_pool() {
     sudo cp ${base_img_path} ${STORAGE_POOL_PATH}/${base_img_name}
 
     # Set proper ownership for libvirt access
-    # Libvirt typically runs as root or in libvirt group
-    sudo chown root:root ${STORAGE_POOL_PATH}/${base_img_name}
+    # Base image is read-only, owned by root but accessible by qemu group
+    # This is more secure than world-readable (644)
+    sudo chown root:qemu ${STORAGE_POOL_PATH}/${base_img_name}
 
-    # Set read permissions for owner and group, world-readable
-    # This allows libvirt to read the image
-    sudo chmod 644 ${STORAGE_POOL_PATH}/${base_img_name}
+    # Set read permissions for owner and group only (not world-readable)
+    # Owner (root): read/write, Group (qemu): read, Others: none
+    sudo chmod 640 ${STORAGE_POOL_PATH}/${base_img_name}
 
     # Refresh the pool so libvirt detects the new volume
     # Without this, virsh vol-list wouldn't show the new image
@@ -566,6 +567,13 @@ create_overlay_image() {
 
     # Store overlay name for later cleanup
     overlay_image_name=${overlay_name}
+
+    # Set proper ownership and permissions for libvirt-qemu access
+    # The overlay needs write access (unlike base image which is read-only)
+    # qemu user (uid:120) and qemu group (gid:127) need access
+    sudo chown qemu:qemu ${overlay_image_path}
+    # Owner (qemu): read/write, Group (qemu): read, Others: none
+    sudo chmod 640 ${overlay_image_path}
 
     echo "Created overlay volume: ${overlay_name}"
 }
