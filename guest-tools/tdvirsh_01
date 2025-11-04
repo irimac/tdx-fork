@@ -611,9 +611,14 @@ create_domain_xml() {
     # || true prevents error if directory already exists
     mkdir -p ${WORKDIR_PATH} || true
 
+    # Get base image path from storage pool
+    # The base image in the pool is what libvirt-qemu needs to access
+    local base_img_name=$(basename ${base_img_path})
+    local base_img_pool_path="${STORAGE_POOL_PATH}/${base_img_name}"
+
     # Use AWK for variable substitution in template
     # AWK variables (-v flag):
-    #   img_path: Base image path
+    #   img_path: Base image path (from storage pool)
     #   domain: Domain prefix
     #   hostdevs: GPU XML
     #   overlay_path: Overlay path
@@ -623,7 +628,7 @@ create_domain_xml() {
     #   $0 represents the current line
     #
     # Process each line of template, perform substitutions, print result
-    awk -v img_path=${base_img_path} \
+    awk -v img_path=${base_img_pool_path} \
         -v domain=${DOMAIN_PREFIX} \
         -v hostdevs="${HOSTDEVS}" \
         -v overlay_path=${overlay_image_path} '
