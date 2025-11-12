@@ -40,6 +40,12 @@
       </backingStore>
       <target dev="vda" bus="virtio"/>
     </disk>
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="CIDATA_ISO_PATH"/>
+      <target dev="sdb" bus="sata"/>
+      <readonly/>
+    </disk>
     <interface type='network'>
       <source network='default'/>
       <model type='virtio'/>
@@ -56,6 +62,7 @@
     <cid auto='yes'/>
     <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
   </vsock>
+  HOSTDEV_DEVICES
   </devices>
   <allowReboot value='no'/>
   <launchSecurity type='tdx'>
