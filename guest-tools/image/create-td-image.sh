@@ -38,9 +38,12 @@
 # or setting following environment variables:
 
 # UBUNTU_VERSION: the ubuntu version (24.04, 24.10, ...)
-# GUEST_USER: the username in the image
-# GUEST_PASSWORD: the user password in the image
-# GUEST_HOSTNAME: the guest hostname
+# GUEST_HOSTNAME: the guest hostname for base image (default: tdx-base-image)
+#
+# NOTE: This script creates generic base images WITHOUT user-specific configuration.
+# User data (username, password, SSH keys) should be provided at launch time using:
+#   ./run_td --user <name> --ssh-key <path> [options]
+#   ./tdvirsh new --user <name> --ssh-key <path> [options]
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
