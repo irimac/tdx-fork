@@ -191,9 +191,17 @@ guest-tools/
 ├── USAGE_GUIDE.md                 # Complete user manual
 ├── TDVIRSH_COMPARISON.md          # Legacy comparison document
 ├── DEVELOPMENT_LOG.md             # Implementation log (technical)
+├── DOCUMENTATION_INDEX.md         # Master documentation index
 ├── tdvirsh                        # Production-ready TD manager ⭐
+├── run_td                         # Python TD launcher (alternative to tdvirsh)
+├── generate-user-cidata.sh        # Cloud-init ISO generator (runtime user config) ⭐
 ├── trust_domain.xml.template      # Libvirt XML template
-└── trust_domain-sb.xml.template   # Secure Boot template
+├── trust_domain-sb.xml.template   # Secure Boot template
+└── image/                         # Image creation tools
+    ├── README.md                  # Image creation documentation
+    ├── create-td-image.sh         # Main: Create TDX base images
+    ├── setup.sh                   # Guest configuration script
+    └── cloud-init-data/           # Cloud-init templates
 ```
 
 ---
@@ -249,6 +257,87 @@ ssh alice@192.168.122.45
 
 # Authentication is via SSH key (configured with --ssh-key during TD creation)
 ```
+
+---
+
+## Helper Scripts
+
+### generate-user-cidata.sh - Runtime User Configuration Generator
+
+**Purpose:** Generates cloud-init ISO files with user-specific configuration (username, SSH keys, passwords, hostname) for runtime injection into TDs.
+
+**Automatically called by:**
+- `tdvirsh new` - Generates ISO during VM creation
+- `run_td` - Generates ISO during VM launch
+
+**Can also be used standalone** for custom workflows.
+
+**Usage:**
+```bash
+./generate-user-cidata.sh -o <output.iso> -u <username> [OPTIONS]
+
+Required:
+  -o, --output PATH         Output ISO file path
+  -u, --user USERNAME       Guest username
+
+Authentication (at least one required):
+  -k, --ssh-key PATH        SSH public key file (recommended)
+  -p, --password PASSWORD   Guest password
+
+Optional:
+  -n, --hostname HOSTNAME   Guest hostname (default: tdx-guest)
+  -h, --help                Show help
+```
+
+**Examples:**
+```bash
+# Generate ISO with SSH key authentication
+./generate-user-cidata.sh \
+    -o /tmp/alice-config.iso \
+    -u alice \
+    -k ~/.ssh/id_rsa.pub \
+    -n alice-workstation
+
+# Generate ISO with password authentication
+./generate-user-cidata.sh \
+    -o /tmp/bob-config.iso \
+    -u bob \
+    -p SecurePassword123 \
+    -n bob-td
+
+# Generate ISO with both auth methods
+./generate-user-cidata.sh \
+    -o /tmp/charlie-config.iso \
+    -u charlie \
+    -k ~/.ssh/id_rsa.pub \
+    -p BackupPassword
+```
+
+**What it creates:**
+- Cloud-init ISO with `user-data` and `meta-data`
+- User account with specified username
+- SSH authorized_keys (if -k provided)
+- Password (if -p provided, otherwise locked)
+- Hostname configuration
+- Sudo permissions (NOPASSWD:ALL)
+
+**How it's used:**
+1. User runs: `./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub`
+2. tdvirsh calls: `generate-user-cidata.sh -o /path/to/cidata.iso -u alice -k ~/.ssh/id_rsa.pub`
+3. ISO is attached to VM as secondary disk (vdb)
+4. Cloud-init reads ISO on first boot
+5. User account is created with SSH key
+6. User can login: `ssh -p 2222 alice@localhost`
+
+**Requirements:**
+- `genisoimage` or `mkisofs` command must be installed
+- SSH public key file must exist and be readable (if using -k)
+
+**Output location (when called by tdvirsh):**
+- `/var/lib/libvirt/images/cidata.<random>.iso`
+- Automatically cleaned up when VM is deleted
+
+**Note:** This script is part of the runtime user injection architecture. It separates user configuration from base image creation, allowing one generic base image to serve multiple users.
 
 ---
 
