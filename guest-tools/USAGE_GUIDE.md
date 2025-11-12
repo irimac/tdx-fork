@@ -991,17 +991,17 @@ ansible -i inventory.ini tdx_guests -m ping
 
 **A:** Yes! They use different pool names and can coexist. However:
 - Original uses `/var/tmp/tdvirsh/`
-- claude_01 uses `/var/lib/libvirt/images`
+- tdvirsh uses `/var/lib/libvirt/images`
 - Domain names may conflict (both use `tdvirsh-` prefix)
 
 ---
 
-### Q: Can I migrate VMs from original tdvirsh to claude_01?
+### Q: Can I migrate VMs from original tdvirsh to tdvirsh?
 
 **A:** Not directly. You need to:
 1. Note the base image used
 2. Delete VM with original tdvirsh
-3. Recreate with claude_01 using same image
+3. Recreate with tdvirsh using same image
 4. VMs are ephemeral (overlay-based), data not preserved
 
 ---
