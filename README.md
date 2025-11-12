@@ -152,24 +152,33 @@ This can be performed on any Ubuntu 22.04 or newer system - an Intel TDX-specifi
 
 ### 5.1 Create a New TD Image
 
-NOTE: The NVIDIA H100 Tensor Core GPU is only supported with Ubuntu Noble 24.04 TD.  
+NOTE: The NVIDIA H100 Tensor Core GPU is only supported with Ubuntu Noble 24.04 TD.
 
-A TD image based on Ubuntu 25.04 can be generated with the following commands:
+A TD image based on Ubuntu 25.04 can be generated with the following commands using SSH key authentication (recommended):
 
 ```bash
 cd tdx/guest-tools/image/
-sudo ./create-td-image.sh -v 25.04
+sudo ./create-td-image.sh -v 25.04 -k ~/.ssh/id_rsa.pub
 ```
 
-You can pass `24.04` or `25.04` to the `-v` to generate a TD image based on Ubuntu 24.04 or 25.04. 
+Alternatively, if you need password authentication for testing purposes:
 
-The resulting image will be based on an ([`Ubuntu cloud image`](https://cloud-images.ubuntu.com/)),
-the default root password is `123456`, and other default settings are used.
+```bash
+cd tdx/guest-tools/image/
+sudo ./create-td-image.sh -v 25.04 -p 'YourSecurePassword'
+```
+
+You can pass `24.04` or `25.04` to the `-v` to generate a TD image based on Ubuntu 24.04 or 25.04.
+
+The resulting image will be based on an ([`Ubuntu cloud image`](https://cloud-images.ubuntu.com/)).
 Please note the most important options described after the commands and take a look at the `create-td-image.sh` script for more available options.
 
 Important options for TD image creation:
+* **Authentication (required)**: Use `-k /path/to/public_key.pub` for SSH key authentication (recommended for security), or `-p 'password'` for password authentication. At least one method must be provided.
 * If you're behind a proxy, use `sudo -E` to preserve user environment.
 * The used kernel type (`generic` or `intel`) will be reflected in the name of the resulting image so it is easy to distinguish.
+
+**Security Note**: SSH key-based authentication is strongly recommended. Password authentication is disabled by default in the guest image, and root login is restricted to key-based authentication only.
 
 ### 5.2 Convert a Regular VM Image into a TD Image
 
@@ -221,10 +230,11 @@ An example output:
 
 ```bash
 TD started by QEMU with PID: 13392.
-To log in with the non-root user (default: tdx / password: 123456), as specified in setup-tdx-config, use: 
+To log in with SSH key authentication, use:
    $ ssh -p 10022 <username>@localhost
-To log in as root (default password: 123456), use: 
-   $ ssh -p 10022 root@localhost
+
+Note: If you configured password authentication during image creation, you will be prompted for the password.
+      SSH key authentication is used by default for enhanced security.
 ```
 
 ### 6.2 Boot TD with `virsh` (libvirt) using `tdvirsh` Script
@@ -271,8 +281,9 @@ To log in as root (default password: 123456), use:
         1    tdvirsh-trust_domain-f7210c2b-2657-4f30-adf3-639b573ea39f   running (ip:192.168.122.212, hostfwd:32855, cid:3)
         ```
 
-        NOTE: `32855` in `hostfwd:32855` is the port number a user can use to connect to the TD via `ssh -p 32855 root@localhost`.
-              You can also connect to the guest using its IP address : `ssh root@192.168.122.212`.
+        NOTE: `32855` in `hostfwd:32855` is the port number a user can use to connect to the TD via `ssh -p 32855 <username>@localhost`.
+              You can also connect to the guest using its IP address: `ssh <username>@192.168.122.212`.
+              Authentication uses SSH keys by default (configured during image creation with `-k` flag).
 
    * A TD can be removed with the following command:
 
@@ -303,18 +314,20 @@ cd tdx/guest-tools
 
 1. Log into the TD using one of the following commands:
 
-   NOTE: If you booted your TD with `td_virsh_tool.sh`, you will likely need
-   a different port number from the one below. The tool will print the appropriate port to use
-   after it has successfully booted the TD.
+   NOTE 1: If you booted your TD with `tdvirsh`, you will likely need a different port number from the one below.
+           The tool will print the appropriate port to use after it has successfully booted the TD.
+
+   NOTE 2: Replace `<username>` with the guest username you configured (default: "tdx").
+           Authentication uses SSH keys by default for security.
 
    * From the local host:
    ```bash
-   ssh -p 10022 root@localhost
+   ssh -p 10022 <username>@localhost
    ```
 
    * From a remote host:
    ```bash
-   ssh -p 10022 root@<host_ip>
+   ssh -p 10022 <username>@<host_ip>
    ```
 
 2. Verify Intel TDX is enabled in the TD:
