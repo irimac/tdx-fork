@@ -25,12 +25,12 @@ apt update
 apt install -y cpuid linux-tools-common msr-tools python3 python3-pip
 
 # setup ssh
-# allow password auth + root login
-sed -i 's|[#]*PasswordAuthentication .*|PasswordAuthentication yes|g' /etc/ssh/sshd_config
-sed -i 's|[#]*PermitRootLogin .*|PermitRootLogin yes|g' /etc/ssh/sshd_config
-sed -i 's|[#]*KbdInteractiveAuthentication .*|KbdInteractiveAuthentication yes|g' /etc/ssh/sshd_config
-# livecd-rootfs adds 60-cloudimg-settings.conf file to set PasswordAuthentication to no
-# if the file exists, remove it
+# disable password auth + prohibit root login for security
+sed -i 's|[#]*PasswordAuthentication .*|PasswordAuthentication no|g' /etc/ssh/sshd_config
+sed -i 's|[#]*PermitRootLogin .*|PermitRootLogin prohibit-password|g' /etc/ssh/sshd_config
+sed -i 's|[#]*KbdInteractiveAuthentication .*|KbdInteractiveAuthentication no|g' /etc/ssh/sshd_config
+sed -i 's|[#]*PubkeyAuthentication .*|PubkeyAuthentication yes|g' /etc/ssh/sshd_config
+# Ensure cloudimg settings don't override our security settings
 rm -f /etc/ssh/sshd_config.d/60-cloudimg-settings.conf
 
 # Enable TDX

@@ -29,11 +29,8 @@ packages:
   - golang-doc
   - ntp
 
-# HACK way to set root password
-# https://github.com/vmware/photon/issues/931
-# set root password to 123456
-bootcmd:
-  - /bin/sed -E -i 's/^root:([^:]+):.*$/root:\$1\$root\$j0bp.KLPyr.u9kgQ428D10:17764:0:99999:7:::/' /etc/shadow
+# Security: Root password removed. Use SSH keys for authentication.
+# Root login is restricted to key-based authentication only.
 
 power_state:
   delay: now
