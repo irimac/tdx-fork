@@ -43,7 +43,7 @@
     <disk type="file" device="cdrom">
       <driver name="qemu" type="raw"/>
       <source file="CIDATA_ISO_PATH"/>
-      <target dev="vdb" bus="virtio"/>
+      <target dev="sdb" bus="sata"/>
       <readonly/>
     </disk>
     <interface type='network'>
