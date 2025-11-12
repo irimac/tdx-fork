@@ -1,7 +1,7 @@
-# tdvirsh_01 Analysis Report
+# tdvirsh Analysis Report
 
 **Date:** November 4, 2025
-**File:** `guest-tools/tdvirsh_01`
+**File:** `guest-tools/tdvirsh`
 **Purpose:** Comprehensive analysis of the enhanced Trust Domain manager
 **Status:** Production-ready replacement for original `tdvirsh`
 
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-`tdvirsh_01` is a production-ready enhancement of the original `tdvirsh` script that adds native libvirt storage pool integration while preserving all production features. The script is 4x larger (1,190 vs 304 lines) but nearly half is comprehensive documentation.
+`tdvirsh` is a production-ready enhancement of the original `tdvirsh` script that adds native libvirt storage pool integration while preserving all production features. The script is 4x larger (1,190 vs 304 lines) but nearly half is comprehensive documentation.
 
 **Key Achievement:** Modernizes TDX guest management with storage pools while maintaining backward compatibility.
 
@@ -36,7 +36,7 @@
 
 | Property | Value |
 |----------|-------|
-| **Filename** | `tdvirsh_01` |
+| **Filename** | `tdvirsh` |
 | **Lines of Code** | 1,190 |
 | **License** | GPL-3.0-only |
 | **Copyright** | 2024 Canonical Ltd. |
@@ -45,7 +45,7 @@
 
 ### Version Comparison
 
-| Metric | Original `tdvirsh` | `tdvirsh_01` | Change |
+| Metric | Original `tdvirsh` | `tdvirsh` | Change |
 |--------|-------------------|--------------|---------|
 | **Total Lines** | 304 | 1,190 | +291% |
 | **Code Lines** | ~280 | ~610 | +118% |
@@ -93,7 +93,7 @@ qemu-img create -f qcow2 -F qcow2 -b ${base_img_path} ${overlay_image_path}
 rm -f ${overlay_image_path}
 ```
 
-**Solution in tdvirsh_01:**
+**Solution in tdvirsh:**
 ```bash
 # Uses standard libvirt location
 STORAGE_POOL_PATH="/var/lib/libvirt/images"
@@ -212,7 +212,7 @@ import_base_image_to_pool() {
 
 **Improved File Permissions:**
 
-| File Type | Original | tdvirsh_01 | Security Improvement |
+| File Type | Original | tdvirsh | Security Improvement |
 |-----------|----------|------------|---------------------|
 | Base Image | Not specified | `root:qemu 640` | Not world-readable |
 | Overlay | Not specified | `qemu:qemu 640` | Restricted to qemu |
@@ -255,7 +255,7 @@ sudo chmod 640 ${overlay_image_path}
 
 **Usage:**
 ```bash
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 ```
 
 **Output:**
@@ -291,7 +291,7 @@ Available:      886.28 GiB
 
 **Usage:**
 ```bash
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 ```
 
 **Implementation (lines 1123-1154):**
@@ -411,7 +411,7 @@ pool-cleanup)
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         User Interface                       │
-│  Command: ./tdvirsh_01 new -i image.qcow2 -g 0000:17:00.0  │
+│  Command: ./tdvirsh new -i image.qcow2 -g 0000:17:00.0  │
 └─────────────────────┬───────────────────────────────────────┘
                       │
                       ▼
@@ -445,7 +445,7 @@ pool-cleanup)
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │ 1. User executes command                                     │
-│    ./tdvirsh_01 new -i image.qcow2                          │
+│    ./tdvirsh new -i image.qcow2                          │
 └─────────────────────┬────────────────────────────────────────┘
                       │
                       ▼
@@ -653,11 +653,11 @@ sudo cp ${base_img_path} ${STORAGE_POOL_PATH}/${base_img_name}
 **Same Command-Line Interface:**
 ```bash
 # Original commands still work
-./tdvirsh_01 new
-./tdvirsh_01 new -i image.qcow2 -t template.xml -g 0000:17:00.0
-./tdvirsh_01 list
-./tdvirsh_01 delete <domain>
-./tdvirsh_01 delete all
+./tdvirsh new
+./tdvirsh new -i image.qcow2 -t template.xml -g 0000:17:00.0
+./tdvirsh list
+./tdvirsh delete <domain>
+./tdvirsh delete all
 ```
 
 **Config File Support:**
@@ -750,7 +750,7 @@ attach_gpus()                  # Only handles GPUs
 
 **Statistics:**
 - Original: 304 lines
-- tdvirsh_01: 1,190 lines
+- tdvirsh: 1,190 lines
 - Increase: **291%** (4x larger)
 
 **Breakdown:**
@@ -786,7 +786,7 @@ attach_gpus()                  # Only handles GPUs
 Original tdvirsh:
   VM creation time: 3.6s
 
-tdvirsh_01:
+tdvirsh:
   First run: 5.8s (+2.2s)
   Subsequent: 3.8s (+0.2s)
 ```
@@ -863,7 +863,7 @@ sudo chmod 640 ${overlay_image_path}
 # Likely inherits from umask or defaults
 ```
 
-**tdvirsh_01 (explicit):**
+**tdvirsh (explicit):**
 ```bash
 # Base image: read-only, not world-readable
 sudo chown root:qemu ${base_image}
@@ -881,7 +881,7 @@ sudo chmod 640 ${overlay_image}
 | Permissions | Owner:Group | Read | Write | Execute |
 |-------------|-------------|------|-------|---------|
 | **644 (typical default)** | user:group | Owner, Group, World | Owner only | None |
-| **640 (tdvirsh_01)** | root:qemu | Owner, Group only | Owner only | None |
+| **640 (tdvirsh)** | root:qemu | Owner, Group only | Owner only | None |
 
 **Security Benefit:**
 - World cannot read VM images
@@ -926,7 +926,7 @@ Overlay Images (Mutable)
 └── Not designed for sensitive data
 ```
 
-**tdvirsh_01:** `/var/lib/libvirt/images`
+**tdvirsh:** `/var/lib/libvirt/images`
 ```
 /var/lib/libvirt/images/
 ├── Root-owned, restricted access (755)
@@ -976,7 +976,7 @@ echo 0x200000 | sudo tee /sys/module/vfio_iommu_type1/parameters/dma_entry_limit
 **Alternatives:**
 ```bash
 # Option 1: Run entire script as root
-sudo ./tdvirsh_01 new
+sudo ./tdvirsh new
 
 # Option 2: Sudo policy file
 # /etc/sudoers.d/tdvirsh
@@ -1203,7 +1203,7 @@ ensure_storage_pool
 # Image imported automatically
 import_base_image_to_pool
 
-# User just runs: ./tdvirsh_01 new
+# User just runs: ./tdvirsh new
 ```
 
 **Rich information display:**
@@ -1231,15 +1231,15 @@ Domain created successfully!
 **Command-line Arguments:**
 ```bash
 # All original commands work
-./tdvirsh_01 new
-./tdvirsh_01 new -i /path/to/image.qcow2
-./tdvirsh_01 new -t /path/to/template.xml
-./tdvirsh_01 new -g 0000:17:00.0,0000:65:00.0
-./tdvirsh_01 list
-./tdvirsh_01 delete <domain>
-./tdvirsh_01 delete all
-./tdvirsh_01 console <domain>     # Passthrough
-./tdvirsh_01 start <domain>       # Passthrough
+./tdvirsh new
+./tdvirsh new -i /path/to/image.qcow2
+./tdvirsh new -t /path/to/template.xml
+./tdvirsh new -g 0000:17:00.0,0000:65:00.0
+./tdvirsh list
+./tdvirsh delete <domain>
+./tdvirsh delete all
+./tdvirsh console <domain>     # Passthrough
+./tdvirsh start <domain>       # Passthrough
 ```
 
 **XML Templates:**
@@ -1270,7 +1270,7 @@ Domain created successfully!
 **Existing VMs:**
 ```
 Original location:      /var/tmp/tdvirsh/
-tdvirsh_01 location:    /var/lib/libvirt/images
+tdvirsh location:    /var/lib/libvirt/images
 
 Result: Cannot manage VMs created by original tdvirsh
 ```
@@ -1286,7 +1286,7 @@ Must recreate VMs, cannot migrate running VMs
 # Original uses qemu-img
 qemu-img create -b base overlay
 
-# tdvirsh_01 uses virsh vol-*
+# tdvirsh uses virsh vol-*
 virsh vol-create-as pool overlay ...
 
 Result: Different volume management approach
@@ -1317,19 +1317,19 @@ ls -l image/*.qcow2
 ./tdvirsh list | grep running
 ```
 
-**Step 3: Test tdvirsh_01**
+**Step 3: Test tdvirsh**
 ```bash
 # Create test VM
-./tdvirsh_01 new -i image/test-image.qcow2
+./tdvirsh new -i image/test-image.qcow2
 
 # Verify pool created
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # Test functionality
-./tdvirsh_01 list
+./tdvirsh list
 
 # Delete test VM
-./tdvirsh_01 delete <test-domain>
+./tdvirsh delete <test-domain>
 ```
 
 **Step 4: Migrate**
@@ -1341,7 +1341,7 @@ ls -l image/*.qcow2
 rm -rf /var/tmp/tdvirsh/
 
 # Replace script
-mv tdvirsh_01 tdvirsh
+mv tdvirsh tdvirsh
 
 # Create new VMs
 ./tdvirsh new
@@ -1367,7 +1367,7 @@ mv tdvirsh_01 tdvirsh
 
 ### Compatibility Matrix
 
-| Feature | Original | tdvirsh_01 | Compatible? |
+| Feature | Original | tdvirsh | Compatible? |
 |---------|----------|------------|-------------|
 | **Commands** | new, list, delete | new, list, delete, pool-* | ✅ Yes |
 | **Arguments** | -i, -t, -g | -i, -t, -g | ✅ Yes |
@@ -1386,14 +1386,14 @@ mv tdvirsh_01 tdvirsh
 
 ### Feature Comparison
 
-| Category | Feature | Original | tdvirsh_01 | Winner |
+| Category | Feature | Original | tdvirsh | Winner |
 |----------|---------|----------|------------|---------|
-| **Storage** | Location | `/var/tmp` | `/var/lib/libvirt/images` | tdvirsh_01 |
-| | API | qemu-img | virsh vol-* | tdvirsh_01 |
-| | Permissions | Unspecified | 640, root:qemu | tdvirsh_01 |
-| | Pool management | None | pool-info, pool-cleanup | tdvirsh_01 |
-| | Auto-import | No | Yes | tdvirsh_01 |
-| | Orphan cleanup | No | Yes | tdvirsh_01 |
+| **Storage** | Location | `/var/tmp` | `/var/lib/libvirt/images` | tdvirsh |
+| | API | qemu-img | virsh vol-* | tdvirsh |
+| | Permissions | Unspecified | 640, root:qemu | tdvirsh |
+| | Pool management | None | pool-info, pool-cleanup | tdvirsh |
+| | Auto-import | No | Yes | tdvirsh |
+| | Orphan cleanup | No | Yes | tdvirsh |
 | **VM Lifecycle** | Creation | ✅ | ✅ | Tie |
 | | Graceful shutdown | ✅ | ✅ | Tie |
 | | Deletion | ✅ | ✅ | Tie |
@@ -1402,32 +1402,32 @@ mv tdvirsh_01 tdvirsh
 | | BDF validation | ✅ Regex | ✅ Regex | Tie |
 | | Setup script | ✅ | ✅ | Tie |
 | | DMA config | ✅ | ✅ | Tie |
-| **Usability** | Zero-config | No | Yes | tdvirsh_01 |
-| | Documentation | Minimal | Comprehensive | tdvirsh_01 |
-| | Error messages | Good | Better | tdvirsh_01 |
-| | Help text | Basic | Detailed | tdvirsh_01 |
-| **Maintainability** | Code comments | ~20 lines | ~580 lines | tdvirsh_01 |
-| | Function docs | None | All functions | tdvirsh_01 |
+| **Usability** | Zero-config | No | Yes | tdvirsh |
+| | Documentation | Minimal | Comprehensive | tdvirsh |
+| | Error messages | Good | Better | tdvirsh |
+| | Help text | Basic | Detailed | tdvirsh |
+| **Maintainability** | Code comments | ~20 lines | ~580 lines | tdvirsh |
+| | Function docs | None | All functions | tdvirsh |
 | | Code size | 304 lines | 1,190 lines | Original |
-| **Compatibility** | Drop-in replacement | N/A | Yes | tdvirsh_01 |
+| **Compatibility** | Drop-in replacement | N/A | Yes | tdvirsh |
 | | Config file | ✅ | ✅ | Tie |
 | | Virsh passthrough | ✅ | ✅ | Tie |
 | **Production** | Battle-tested | ✅ | ⚠️ New | Original |
-| | Error handling | Good | Excellent | tdvirsh_01 |
-| | Safety | Good | Better | tdvirsh_01 |
+| | Error handling | Good | Excellent | tdvirsh |
+| | Safety | Good | Better | tdvirsh |
 
 ### Overall Score
 
 | Version | Features | Usability | Security | Documentation | Production | Total |
 |---------|----------|-----------|----------|---------------|------------|-------|
 | **Original** | 7/10 | 7/10 | 7/10 | 3/10 | 10/10 | **34/50** |
-| **tdvirsh_01** | 10/10 | 10/10 | 9/10 | 10/10 | 8/10 | **47/50** |
+| **tdvirsh** | 10/10 | 10/10 | 9/10 | 10/10 | 8/10 | **47/50** |
 
 ---
 
 ## Recommendations
 
-### For New Deployments: Use tdvirsh_01 ✅
+### For New Deployments: Use tdvirsh ✅
 
 **Reasons:**
 1. ✅ Modern libvirt storage pool integration
@@ -1442,7 +1442,7 @@ mv tdvirsh_01 tdvirsh
 **Action Plan:**
 ```bash
 # 1. Install
-cp tdvirsh_01 /usr/local/bin/tdvirsh
+cp tdvirsh /usr/local/bin/tdvirsh
 chmod +x /usr/local/bin/tdvirsh
 
 # 2. Create first VM
@@ -1477,7 +1477,7 @@ tdvirsh new -g 0000:17:00.0
 ```bash
 # Keep both versions
 mv tdvirsh tdvirsh-original
-cp tdvirsh_01 tdvirsh-new
+cp tdvirsh tdvirsh-new
 
 # Use original for existing VMs
 ./tdvirsh-original list
@@ -1490,7 +1490,7 @@ cp tdvirsh_01 tdvirsh-new
 
 ---
 
-### For Development: Use tdvirsh_01 📚
+### For Development: Use tdvirsh 📚
 
 **Benefits:**
 - Comprehensive documentation aids understanding
@@ -1523,15 +1523,15 @@ esac
 
 | Scenario | Recommendation | Priority |
 |----------|----------------|----------|
-| **New TDX deployment** | tdvirsh_01 | High |
-| **Existing <5 VMs** | Migrate to tdvirsh_01 | Medium |
+| **New TDX deployment** | tdvirsh | High |
+| **Existing <5 VMs** | Migrate to tdvirsh | Medium |
 | **Existing >5 VMs** | Keep original | Low |
-| **Development/Testing** | tdvirsh_01 | High |
-| **Learning TDX** | tdvirsh_01 (better docs) | High |
+| **Development/Testing** | tdvirsh | High |
+| **Learning TDX** | tdvirsh (better docs) | High |
 | **Production (stable)** | Keep original | Medium |
-| **Production (new)** | tdvirsh_01 | High |
-| **CI/CD pipelines** | tdvirsh_01 | High |
-| **Manual operations** | tdvirsh_01 | Medium |
+| **Production (new)** | tdvirsh | High |
+| **CI/CD pipelines** | tdvirsh | High |
+| **Manual operations** | tdvirsh | Medium |
 
 ---
 
@@ -1539,7 +1539,7 @@ esac
 
 ### Summary
 
-**tdvirsh_01** is a **production-ready, well-documented enhancement** of the original `tdvirsh` script that successfully:
+**tdvirsh** is a **production-ready, well-documented enhancement** of the original `tdvirsh` script that successfully:
 
 1. ✅ **Modernizes** storage management with libvirt pools
 2. ✅ **Enhances** security with proper permissions (640, root:qemu, qemu:qemu)
@@ -1564,7 +1564,7 @@ esac
 
 ### Final Verdict
 
-**Recommendation: Use tdvirsh_01 for all new work**
+**Recommendation: Use tdvirsh for all new work**
 
 **Rationale:**
 - Represents current best practices
@@ -1587,36 +1587,36 @@ esac
 
 ```bash
 # Create VM with defaults
-./tdvirsh_01 new
+./tdvirsh new
 
 # Create VM with custom image
-./tdvirsh_01 new -i /path/to/image.qcow2
+./tdvirsh new -i /path/to/image.qcow2
 
 # Create VM with GPU passthrough
-./tdvirsh_01 new -g 0000:17:00.0,0000:65:00.0
+./tdvirsh new -g 0000:17:00.0,0000:65:00.0
 
 # List all VMs with connection info
-./tdvirsh_01 list
+./tdvirsh list
 
 # Delete specific VM
-./tdvirsh_01 delete tdvirsh-trust_domain-abc123...
+./tdvirsh delete tdvirsh-trust_domain-abc123...
 
 # Delete all VMs
-./tdvirsh_01 delete all
+./tdvirsh delete all
 
 # Show pool information
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # Clean orphaned overlays
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 
 # Get help
-./tdvirsh_01 --help
+./tdvirsh --help
 
 # Pass through to virsh
-./tdvirsh_01 console <domain>
-./tdvirsh_01 start <domain>
-./tdvirsh_01 <any-virsh-command>
+./tdvirsh console <domain>
+./tdvirsh start <domain>
+./tdvirsh <any-virsh-command>
 ```
 
 ### Key Locations
@@ -1674,8 +1674,8 @@ Utility Functions:
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** November 4, 2025
-**Analyzed Script:** `guest-tools/tdvirsh_01`
+**Document Version:** 1.1
+**Last Updated:** November 12, 2025
+**Analyzed Script:** `guest-tools/tdvirsh`
 **Lines Analyzed:** 1,190
 **Analysis Status:** Complete ✅

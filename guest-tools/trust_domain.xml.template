@@ -40,6 +40,12 @@
       </backingStore>
       <target dev="vda" bus="virtio"/>
     </disk>
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="CIDATA_ISO_PATH"/>
+      <target dev="vdb" bus="virtio"/>
+      <readonly/>
+    </disk>
     <interface type='network'>
       <source network='default'/>
       <model type='virtio'/>

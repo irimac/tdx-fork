@@ -13,7 +13,7 @@ This document provides a comprehensive log of the analysis and enhancement of th
 ### Key Results
 
 - **Original Script:** 304 lines, production-ready
-- **Enhanced Version (tdvirsh_01):** 1,190 lines, production-ready with modern features
+- **Enhanced Version (tdvirsh):** 1,190 lines, production-ready with modern features
 - **Primary Achievement:** Native libvirt storage pool integration at `/var/lib/libvirt/images`
 - **Documentation:** 49% of file is comprehensive documentation (580 lines)
 
@@ -138,7 +138,7 @@ Based on the analysis of the original script, the following enhancement goals we
 
 ## Phase 3: Design Decisions
 
-### Objectives for Enhanced Version (tdvirsh_01)
+### Objectives for Enhanced Version (tdvirsh)
 
 1. **Preserve all production features** from original
 2. **Add libvirt storage pool integration** with proper implementation
@@ -331,7 +331,7 @@ grep -oP "${STORAGE_POOL_PATH}/overlay\.[A-Za-z0-9]+\.qcow2"
 
 **Usage:**
 ```bash
-./tdvirsh_claude_01 pool-info
+./tdvirsh pool-info
 ```
 
 #### 2. pool-cleanup
@@ -351,7 +351,7 @@ grep -oP "${STORAGE_POOL_PATH}/overlay\.[A-Za-z0-9]+\.qcow2"
 
 **Usage:**
 ```bash
-./tdvirsh_claude_01 pool-cleanup
+./tdvirsh pool-cleanup
 ```
 
 ---
@@ -460,7 +460,7 @@ grep -oP "${STORAGE_POOL_PATH}/overlay\.[A-Za-z0-9]+\.qcow2"
    - Examples for all commands
    - Troubleshooting guide
 
-4. **Enhanced tdvirsh_claude_01**
+4. **Enhanced tdvirsh**
    - Detailed inline comments
    - Function documentation
    - Better code organization
@@ -511,7 +511,7 @@ grep -oP "${STORAGE_POOL_PATH}/overlay\.[A-Za-z0-9]+\.qcow2"
 
 ## Metrics
 
-| Metric | Original | tdvirsh_01 | Change |
+| Metric | Original | tdvirsh | Change |
 |--------|----------|------------|--------|
 | Lines of Code | 304 | 1,190 | +291% |
 | Code Lines | ~280 | ~610 | +118% |
@@ -573,7 +573,7 @@ grep -oP "${STORAGE_POOL_PATH}/overlay\.[A-Za-z0-9]+\.qcow2"
 
 ## Conclusion
 
-The `tdvirsh_01` script successfully achieves:
+The `tdvirsh` script successfully achieves:
 - **Production-readiness** of the original tdvirsh
 - **Modern storage approach** with libvirt pools
 - **Enhanced features** for better management
@@ -582,16 +582,16 @@ The `tdvirsh_01` script successfully achieves:
 
 The result is a **robust, production-grade tool** that follows libvirt best practices while maintaining all the features that made the original version reliable.
 
-**Recommendation:** Use `tdvirsh_01` for all new deployments. The original `tdvirsh` can be kept as a fallback for environments where storage pools cannot be used.
+**Recommendation:** Use `tdvirsh` for all new deployments. The original `tdvirsh` can be kept as a fallback for environments where storage pools cannot be used.
 
 ---
 
 ## References
 
 - **Original Script:** `guest-tools/tdvirsh`
-- **Enhanced Version:** `guest-tools/tdvirsh_01`
-- **Complete Analysis:** `guest-tools/TDVIRSH_01_ANALYSIS.md`
-- **Quick Reference:** `guest-tools/TDVIRSH_01_SUMMARY.md`
+- **Enhanced Version:** `guest-tools/tdvirsh`
+- **Complete Analysis:** `guest-tools/TDVIRSH_ANALYSIS.md`
+- **Quick Reference:** `guest-tools/TDVIRSH_SUMMARY.md`
 - **Libvirt Storage Pools:** https://libvirt.org/storage.html
 - **TDX Documentation:** Intel TDX Technology Overview
 - **Ubuntu Cloud Images:** https://cloud-images.ubuntu.com/

@@ -53,10 +53,7 @@ LOGFILE=/tmp/tdx-guest-setup.txt
 FORCE_RECREATE=false
 TMP_GUEST_IMG_PATH="/tmp/tdx-guest-tmp.qcow2"
 SIZE=100
-GUEST_USER=${GUEST_USER:-"tdx"}
-GUEST_PASSWORD=${GUEST_PASSWORD:-""}
-GUEST_HOSTNAME=${GUEST_HOSTNAME:-"tdx-guest"}
-SSH_PUBLIC_KEY=${SSH_PUBLIC_KEY:-""}
+GUEST_HOSTNAME=${GUEST_HOSTNAME:-"tdx-base-image"}
 
 ok() {
     echo -e "\e[1;32mSUCCESS: $*\e[0;0m"
@@ -97,41 +94,36 @@ workaround_passt() {
 usage() {
     cat <<EOM
 Usage: $(basename "$0") [OPTION]...
+
+Create a generic TDX-enabled base image without user-specific configuration.
+User configuration (username, password, SSH keys) will be injected at runtime
+when launching the TD.
+
+Options:
   -h                        Show this help
   -f                        Force to recreate the output image
-  -n                        Guest host name, default is "tdx-guest"
-  -u                        Guest user name, default is "tdx"
-  -p                        Guest password (optional if -k is provided)
-  -k                        Path to SSH public key file for authentication (recommended)
-  -s                        Specify the size of guest image
-  -v                        Ubuntu version (24.04, 25.04)
+  -n                        Guest hostname for base image, default is "tdx-base-image"
+  -s                        Specify the size of guest image (default: 100GB)
+  -v                        Ubuntu version (24.04, 25.04) [REQUIRED]
   -o <output file>          Specify the output file, default is tdx-guest-ubuntu-<version>.qcow2.
-                            Please make sure the suffix is qcow2. Due to permission consideration,
-                            the output file will be put into /tmp/<output file>.
+                            Please make sure the suffix is qcow2.
 
-Note: For security, it's recommended to use SSH key authentication (-k) instead of password (-p).
-      At least one authentication method (password or SSH key) must be provided.
+Example:
+  sudo $(basename "$0") -v 25.04
+  sudo $(basename "$0") -v 24.04 -s 50 -o my-tdx-base.qcow2
+
+Note: This creates a base image. User configuration is provided at launch time using:
+      ./run_td --image base.qcow2 --user alice --ssh-key ~/.ssh/id_rsa.pub
+      ./tdvirsh new --td-image base.qcow2 --user alice --ssh-key ~/.ssh/id_rsa.pub
 EOM
 }
 
 process_args() {
-    while getopts "v:o:s:n:u:p:k:r:fch" option; do
+    while getopts "v:o:s:n:r:fch" option; do
         case "$option" in
         o) GUEST_IMG_PATH=$(realpath "$OPTARG") ;;
         s) SIZE=${OPTARG} ;;
         n) GUEST_HOSTNAME=${OPTARG} ;;
-        u) GUEST_USER=${OPTARG} ;;
-        p) GUEST_PASSWORD=${OPTARG} ;;
-        k)
-            SSH_KEY_FILE=$(realpath "$OPTARG")
-            if [[ ! -f "${SSH_KEY_FILE}" ]]; then
-                error "SSH public key file not found: ${SSH_KEY_FILE}"
-            fi
-            SSH_PUBLIC_KEY=$(cat "${SSH_KEY_FILE}")
-            if [[ -z "${SSH_PUBLIC_KEY}" ]]; then
-                error "SSH public key file is empty: ${SSH_KEY_FILE}"
-            fi
-            ;;
         f) FORCE_RECREATE=true ;;
         v) UBUNTU_VERSION=${OPTARG} ;;
         h)
@@ -148,11 +140,6 @@ process_args() {
 
     if [[ -z "${UBUNTU_VERSION}" ]]; then
         error "Please specify the ubuntu release by setting UBUNTU_VERSION or passing it via -v"
-    fi
-
-    # Validate authentication method
-    if [[ -z "${GUEST_PASSWORD}" ]] && [[ -z "${SSH_PUBLIC_KEY}" ]]; then
-        error "At least one authentication method must be provided: use -p for password or -k for SSH key (recommended)"
     fi
 
     # generate variables
@@ -293,29 +280,7 @@ config_cloud_init() {
     cp user-data.template user-data
     cp meta-data.template meta-data
 
-    # configure the user-data
-    cat <<EOT >> user-data
-
-user: $GUEST_USER
-EOT
-
-    # Add password configuration if provided
-    if [[ -n "${GUEST_PASSWORD}" ]]; then
-        cat <<EOT >> user-data
-password: $GUEST_PASSWORD
-chpasswd: { expire: False }
-EOT
-    fi
-
-    # Add SSH key configuration if provided
-    if [[ -n "${SSH_PUBLIC_KEY}" ]]; then
-        cat <<EOT >> user-data
-ssh_authorized_keys:
-  - $SSH_PUBLIC_KEY
-EOT
-    fi
-
-    # configure the meta-dta
+    # configure the meta-data with hostname
     cat <<EOT >> meta-data
 
 local-hostname: $GUEST_HOSTNAME

@@ -1,22 +1,22 @@
 # TDX Guest Tools - Complete Documentation Index
 
-**Last Updated:** November 4, 2025
+**Last Updated:** November 12, 2025
 **Project:** Intel TDX Trust Domain Management Tools
-**Primary Tool:** `tdvirsh_01` - Enhanced TD manager with storage pool integration
+**Primary Tool:** `tdvirsh` - Enhanced TD manager with storage pool integration
 
 ---
 
 ## 📚 Documentation Overview
 
-This directory contains comprehensive documentation for TDX guest management tools, focusing on the enhanced `tdvirsh_01` script.
+This directory contains comprehensive documentation for TDX guest management tools, focusing on the enhanced `tdvirsh` script.
 
 ### Quick Navigation
 
 | What You Need | Document to Read | Time Required |
 |---------------|------------------|---------------|
-| **Get started quickly** | [TDVIRSH_01_SUMMARY.md](#quick-reference) | 5 minutes |
+| **Get started quickly** | [TDVIRSH_SUMMARY.md](#quick-reference) | 5 minutes |
 | **Learn all commands** | [USAGE_GUIDE.md](#complete-user-manual) | 30 minutes |
-| **Understand technical details** | [TDVIRSH_01_ANALYSIS.md](#technical-analysis) | 60 minutes |
+| **Understand technical details** | [TDVIRSH_ANALYSIS.md](#technical-analysis) | 60 minutes |
 | **See implementation history** | [DEVELOPMENT_LOG.md](#development-log) | 30 minutes |
 | **Compare versions** | [TDVIRSH_COMPARISON.md](#version-comparison) | 15 minutes |
 | **View this index** | [README.md](#documentation-hub) | 5 minutes |
@@ -25,7 +25,7 @@ This directory contains comprehensive documentation for TDX guest management too
 
 ## 📖 Documentation Files
 
-### 1. TDVIRSH_01_SUMMARY.md - Quick Reference
+### 1. TDVIRSH_SUMMARY.md - Quick Reference
 
 **🎯 Purpose:** Fast lookup and quick start guide
 **👥 Audience:** All users
@@ -54,7 +54,7 @@ This directory contains comprehensive documentation for TDX guest management too
 - You're troubleshooting an issue
 - You need quick answers
 
-[→ Read TDVIRSH_01_SUMMARY.md](./TDVIRSH_01_SUMMARY.md)
+[→ Read TDVIRSH_SUMMARY.md](./TDVIRSH_SUMMARY.md)
 
 ---
 
@@ -92,7 +92,7 @@ This directory contains comprehensive documentation for TDX guest management too
 
 ---
 
-### 3. TDVIRSH_01_ANALYSIS.md - Technical Analysis
+### 3. TDVIRSH_ANALYSIS.md - Technical Analysis
 
 **🎯 Purpose:** Complete technical evaluation and architecture documentation
 **👥 Audience:** Developers, architects, decision makers
@@ -122,7 +122,7 @@ This directory contains comprehensive documentation for TDX guest management too
 - You're planning a migration
 - You want security details
 
-[→ Read TDVIRSH_01_ANALYSIS.md](./TDVIRSH_01_ANALYSIS.md)
+[→ Read TDVIRSH_ANALYSIS.md](./TDVIRSH_ANALYSIS.md)
 
 ---
 
@@ -229,11 +229,11 @@ This directory contains comprehensive documentation for TDX guest management too
 1. README.md (10 min)
    └─ Overview and quick start
 
-2. TDVIRSH_01_SUMMARY.md (10 min)
+2. TDVIRSH_SUMMARY.md (10 min)
    └─ Command syntax and examples
 
 3. Create your first TD:
-   ./tdvirsh_01 new
+   ./tdvirsh new
 
 4. USAGE_GUIDE.md (as needed)
    └─ Detailed help when you need it
@@ -244,15 +244,15 @@ This directory contains comprehensive documentation for TDX guest management too
 ### Path 2: Experienced User (Migration)
 
 ```
-1. TDVIRSH_01_SUMMARY.md (5 min)
+1. TDVIRSH_SUMMARY.md (5 min)
    └─ Quick differences overview
 
 2. TDVIRSH_COMPARISON.md (15 min)
    └─ Detailed comparison and migration guide
 
 3. Test migration:
-   ./tdvirsh_01 new
-   ./tdvirsh_01 pool-info
+   ./tdvirsh new
+   ./tdvirsh pool-info
 
 4. USAGE_GUIDE.md (as needed)
    └─ Reference for new commands
@@ -263,17 +263,17 @@ This directory contains comprehensive documentation for TDX guest management too
 ### Path 3: Technical Evaluation
 
 ```
-1. TDVIRSH_01_SUMMARY.md (10 min)
+1. TDVIRSH_SUMMARY.md (10 min)
    └─ Quick overview and stats
 
-2. TDVIRSH_01_ANALYSIS.md (60 min)
+2. TDVIRSH_ANALYSIS.md (60 min)
    └─ Complete technical analysis
 
 3. DEVELOPMENT_LOG.md (30 min)
    └─ Design rationale
 
 4. Review source code:
-   Read tdvirsh_01 (well-commented)
+   Read tdvirsh (well-commented)
 ```
 
 ---
@@ -284,11 +284,11 @@ This directory contains comprehensive documentation for TDX guest management too
 1. DEVELOPMENT_LOG.md (30 min)
    └─ Understand development process
 
-2. TDVIRSH_01_ANALYSIS.md (60 min)
+2. TDVIRSH_ANALYSIS.md (60 min)
    └─ Architecture and code quality
 
 3. Review source code:
-   Read tdvirsh_01 (1,190 lines, 49% comments)
+   Read tdvirsh (1,190 lines, 49% comments)
 
 4. USAGE_GUIDE.md (30 min)
    └─ Understand user workflows
@@ -300,9 +300,9 @@ This directory contains comprehensive documentation for TDX guest management too
 
 | Document | Lines | Type | Completeness |
 |----------|-------|------|--------------|
-| **TDVIRSH_01_SUMMARY.md** | ~450 | Quick Reference | ✅ Complete |
+| **TDVIRSH_SUMMARY.md** | ~450 | Quick Reference | ✅ Complete |
 | **USAGE_GUIDE.md** | ~1,160 | User Manual | ✅ Complete |
-| **TDVIRSH_01_ANALYSIS.md** | ~1,500 | Technical Analysis | ✅ Complete |
+| **TDVIRSH_ANALYSIS.md** | ~1,500 | Technical Analysis | ✅ Complete |
 | **DEVELOPMENT_LOG.md** | ~600 | Development History | ✅ Complete |
 | **TDVIRSH_COMPARISON.md** | ~546 | Version Comparison | ✅ Complete |
 | **README.md** | ~560 | Documentation Hub | ✅ Complete |
@@ -317,31 +317,31 @@ This directory contains comprehensive documentation for TDX guest management too
 
 | Topic | Primary Document | Secondary Document |
 |-------|------------------|-------------------|
-| **Getting Started** | TDVIRSH_01_SUMMARY.md | README.md |
-| **Command Syntax** | USAGE_GUIDE.md | TDVIRSH_01_SUMMARY.md |
-| **GPU Passthrough** | USAGE_GUIDE.md | TDVIRSH_01_SUMMARY.md |
-| **Storage Pools** | USAGE_GUIDE.md | TDVIRSH_01_ANALYSIS.md |
-| **Troubleshooting** | USAGE_GUIDE.md | TDVIRSH_01_SUMMARY.md |
-| **Security** | TDVIRSH_01_ANALYSIS.md | DEVELOPMENT_LOG.md |
-| **Architecture** | TDVIRSH_01_ANALYSIS.md | DEVELOPMENT_LOG.md |
-| **Migration** | TDVIRSH_COMPARISON.md | TDVIRSH_01_ANALYSIS.md |
-| **Code Review** | TDVIRSH_01_ANALYSIS.md | Source Code (tdvirsh_01) |
-| **Design Rationale** | DEVELOPMENT_LOG.md | TDVIRSH_01_ANALYSIS.md |
+| **Getting Started** | TDVIRSH_SUMMARY.md | README.md |
+| **Command Syntax** | USAGE_GUIDE.md | TDVIRSH_SUMMARY.md |
+| **GPU Passthrough** | USAGE_GUIDE.md | TDVIRSH_SUMMARY.md |
+| **Storage Pools** | USAGE_GUIDE.md | TDVIRSH_ANALYSIS.md |
+| **Troubleshooting** | USAGE_GUIDE.md | TDVIRSH_SUMMARY.md |
+| **Security** | TDVIRSH_ANALYSIS.md | DEVELOPMENT_LOG.md |
+| **Architecture** | TDVIRSH_ANALYSIS.md | DEVELOPMENT_LOG.md |
+| **Migration** | TDVIRSH_COMPARISON.md | TDVIRSH_ANALYSIS.md |
+| **Code Review** | TDVIRSH_ANALYSIS.md | Source Code (tdvirsh) |
+| **Design Rationale** | DEVELOPMENT_LOG.md | TDVIRSH_ANALYSIS.md |
 
 ### By Question
 
 | Question | Document | Section |
 |----------|----------|---------|
-| **How do I create a VM?** | TDVIRSH_01_SUMMARY.md | Command Reference |
+| **How do I create a VM?** | TDVIRSH_SUMMARY.md | Command Reference |
 | **What's the difference from original?** | TDVIRSH_COMPARISON.md | Detailed Comparison |
-| **Is it production-ready?** | TDVIRSH_01_ANALYSIS.md | Conclusion |
+| **Is it production-ready?** | TDVIRSH_ANALYSIS.md | Conclusion |
 | **How do I migrate?** | TDVIRSH_COMPARISON.md | Migration Guide |
-| **How does storage work?** | TDVIRSH_01_ANALYSIS.md | Major Improvements #1 |
-| **What are the security features?** | TDVIRSH_01_ANALYSIS.md | Security Analysis |
+| **How does storage work?** | TDVIRSH_ANALYSIS.md | Major Improvements #1 |
+| **What are the security features?** | TDVIRSH_ANALYSIS.md | Security Analysis |
 | **How do I troubleshoot?** | USAGE_GUIDE.md | Troubleshooting |
 | **Why was it designed this way?** | DEVELOPMENT_LOG.md | Design Decisions |
 | **Can I use GPUs?** | USAGE_GUIDE.md | GPU Passthrough |
-| **What's the performance impact?** | TDVIRSH_01_ANALYSIS.md | Performance Comparison |
+| **What's the performance impact?** | TDVIRSH_ANALYSIS.md | Performance Comparison |
 
 ---
 
@@ -352,36 +352,36 @@ This directory contains comprehensive documentation for TDX guest management too
 #### End User / Operator
 ```
 1. README.md → Overview
-2. TDVIRSH_01_SUMMARY.md → Quick start
+2. TDVIRSH_SUMMARY.md → Quick start
 3. USAGE_GUIDE.md → Complete reference
 ```
 
 #### System Administrator
 ```
-1. TDVIRSH_01_SUMMARY.md → Quick overview
+1. TDVIRSH_SUMMARY.md → Quick overview
 2. USAGE_GUIDE.md → Complete usage
-3. TDVIRSH_01_ANALYSIS.md → Security section
+3. TDVIRSH_ANALYSIS.md → Security section
 ```
 
 #### Developer / Maintainer
 ```
 1. DEVELOPMENT_LOG.md → Design history
-2. TDVIRSH_01_ANALYSIS.md → Complete analysis
-3. Source code review → tdvirsh_01
+2. TDVIRSH_ANALYSIS.md → Complete analysis
+3. Source code review → tdvirsh
 4. USAGE_GUIDE.md → User workflows
 ```
 
 #### Decision Maker / Architect
 ```
-1. TDVIRSH_01_SUMMARY.md → Quick stats
+1. TDVIRSH_SUMMARY.md → Quick stats
 2. TDVIRSH_COMPARISON.md → Version comparison
-3. TDVIRSH_01_ANALYSIS.md → Technical evaluation
+3. TDVIRSH_ANALYSIS.md → Technical evaluation
 4. DEVELOPMENT_LOG.md → Design rationale
 ```
 
 #### Security Reviewer
 ```
-1. TDVIRSH_01_ANALYSIS.md → Security Analysis section
+1. TDVIRSH_ANALYSIS.md → Security Analysis section
 2. DEVELOPMENT_LOG.md → Security design decisions
 3. Source code review → Permission handling
 ```
@@ -411,13 +411,13 @@ All documentation covers these key features:
 guest-tools/
 ├── DOCUMENTATION_INDEX.md         # This file - master index ⭐
 ├── README.md                      # Documentation hub
-├── TDVIRSH_01_SUMMARY.md          # Quick reference ⭐
-├── TDVIRSH_01_ANALYSIS.md         # Complete analysis
+├── TDVIRSH_SUMMARY.md          # Quick reference ⭐
+├── TDVIRSH_ANALYSIS.md         # Complete analysis
 ├── USAGE_GUIDE.md                 # User manual
 ├── DEVELOPMENT_LOG.md             # Development history
 ├── TDVIRSH_COMPARISON.md          # Version comparison
 ├── tdvirsh                        # Original script (reference)
-├── tdvirsh_01                     # Enhanced script ⭐
+├── tdvirsh                     # Enhanced script ⭐
 ├── trust_domain.xml.template      # Libvirt XML template
 └── trust_domain-sb.xml.template   # Secure Boot template
 ```
@@ -471,7 +471,7 @@ This documentation package has been designed with:
 
 ### Contributing
 1. Read DEVELOPMENT_LOG.md for history
-2. Review TDVIRSH_01_ANALYSIS.md for architecture
+2. Review TDVIRSH_ANALYSIS.md for architecture
 3. Follow patterns in existing code
 
 ---
@@ -483,7 +483,7 @@ If you can't find what you need:
 1. **Check the FAQ** - USAGE_GUIDE.md has extensive FAQ
 2. **Review Examples** - All docs have practical examples
 3. **Read Troubleshooting** - Common issues and solutions
-4. **Check Source Comments** - tdvirsh_01 is 49% documentation
+4. **Check Source Comments** - tdvirsh is 49% documentation
 
 ---
 
@@ -493,15 +493,15 @@ If you can't find what you need:
 ```
 Time: 30 minutes
 1. README.md (10 min)
-2. TDVIRSH_01_SUMMARY.md (10 min)
-3. Try: ./tdvirsh_01 new (5 min)
+2. TDVIRSH_SUMMARY.md (10 min)
+3. Try: ./tdvirsh new (5 min)
 4. USAGE_GUIDE.md - Basic commands (5 min)
 ```
 
 ### Intermediate (Used original tdvirsh)
 ```
 Time: 45 minutes
-1. TDVIRSH_01_SUMMARY.md (10 min)
+1. TDVIRSH_SUMMARY.md (10 min)
 2. TDVIRSH_COMPARISON.md (20 min)
 3. Try migration (10 min)
 4. USAGE_GUIDE.md - New features (5 min)
@@ -510,7 +510,7 @@ Time: 45 minutes
 ### Advanced (Administering multiple TDs)
 ```
 Time: 90 minutes
-1. TDVIRSH_01_ANALYSIS.md (45 min)
+1. TDVIRSH_ANALYSIS.md (45 min)
 2. USAGE_GUIDE.md - Advanced topics (30 min)
 3. DEVELOPMENT_LOG.md - Design rationale (15 min)
 ```
@@ -519,7 +519,7 @@ Time: 90 minutes
 ```
 Time: 3 hours
 1. DEVELOPMENT_LOG.md (30 min)
-2. TDVIRSH_01_ANALYSIS.md (60 min)
+2. TDVIRSH_ANALYSIS.md (60 min)
 3. Source code review (60 min)
 4. USAGE_GUIDE.md (30 min)
 ```
@@ -541,6 +541,7 @@ Time: 3 hours
 | Date | Version | Changes |
 |------|---------|---------|
 | 2025-11-04 | 1.0 | Initial master documentation index |
+| 2025-11-12 | 1.1 | Consolidated to single tdvirsh script, removed tdvirsh_01 and tdx-api |
 
 ---
 
@@ -549,9 +550,9 @@ Time: 3 hours
 Pick your starting point from the tables above and begin exploring. The documentation is comprehensive, well-organized, and designed to get you productive quickly.
 
 **Most Common Starting Points:**
-- 🚀 **Just want to use it?** → [TDVIRSH_01_SUMMARY.md](./TDVIRSH_01_SUMMARY.md)
+- 🚀 **Just want to use it?** → [TDVIRSH_SUMMARY.md](./TDVIRSH_SUMMARY.md)
 - 📖 **Need complete manual?** → [USAGE_GUIDE.md](./USAGE_GUIDE.md)
-- 🔍 **Technical evaluation?** → [TDVIRSH_01_ANALYSIS.md](./TDVIRSH_01_ANALYSIS.md)
+- 🔍 **Technical evaluation?** → [TDVIRSH_ANALYSIS.md](./TDVIRSH_ANALYSIS.md)
 - 🔄 **Migrating?** → [TDVIRSH_COMPARISON.md](./TDVIRSH_COMPARISON.md)
 
 ---

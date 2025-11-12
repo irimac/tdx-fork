@@ -1,4 +1,7 @@
 #cloud-config
+# Base image cloud-init configuration
+# This configures the system without user-specific data
+# User configuration will be injected at runtime via separate cloud-init ISO
 
 write_files:
 - content: |
@@ -14,8 +17,7 @@ write_files:
   path: /etc/netplan/netplan.yaml
 - content: |
     ===========================================================================
-    Welcome to Ubuntu
-    Created by Kobuk team
+    Welcome to Ubuntu TDX Guest
     ===========================================================================
   path: /etc/motd
 - content: |
@@ -29,12 +31,18 @@ packages:
   - golang-doc
   - ntp
 
-# Security: Root password removed. Use SSH keys for authentication.
-# Root login is restricted to key-based authentication only.
+# Ensure cloud-init runs again on first boot for user configuration
+cloud_final_modules:
+  - scripts-user
+  - ssh-authkey-fingerprints
+  - keys-to-console
+  - phone-home
+  - final-message
+  - power-state-change
 
 power_state:
   delay: now
   mode: poweroff
-  message: Bye Bye
+  message: Base image configuration complete
   timeout: 1
   condition: True

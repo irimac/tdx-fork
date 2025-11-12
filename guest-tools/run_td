@@ -39,15 +39,15 @@ else:
 
 tdvf_params='/usr/share/ovmf/OVMF.fd'
 
-def do_print():
+def do_print(username='tdx'):
     try:
         with open(pidfile) as pid_file:
-            pid=int(pid_file.read())        
+            pid=int(pid_file.read())
             print(f'TD started by QEMU with PID: {pid}.')
-            print(f'To log in with the non-root user (default: tdx / password: 123456), as specified in setup-tdx-config, use:')
-            print(f'   $ ssh -p {ssh_port} <username>@localhost')
-            print('To log in as root (default password: 123456), use:')
-            print(f'   $ ssh -p {ssh_port} root@localhost')
+            print(f'To log in with the user "{username}", use:')
+            print(f'   $ ssh -p {ssh_port} {username}@localhost')
+            print()
+            print('Note: Authentication uses SSH keys or password as configured.')
     except:
         pass
 
@@ -59,6 +59,34 @@ def do_clean():
         # wait for process to exit
         time.sleep(3)
         os.remove(pidfile)
+
+def generate_cidata_iso(user, ssh_key=None, password=None, hostname='tdx-guest'):
+    """Generate cloud-init ISO with user configuration"""
+    import tempfile
+
+    # Create temporary ISO file
+    cidata_iso = tempfile.NamedTemporaryFile(delete=False, suffix='.iso', prefix='tdx-userdata-')
+    cidata_iso.close()
+
+    # Build command for generate-user-cidata.sh
+    cmd = [f'{file_path}/generate-user-cidata.sh', '-o', cidata_iso.name, '-u', user, '-n', hostname]
+
+    if ssh_key:
+        cmd.extend(['-k', ssh_key])
+    if password:
+        cmd.extend(['-p', password])
+
+    try:
+        subprocess.check_call(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        return cidata_iso.name
+    except subprocess.CalledProcessError as e:
+        print(f'ERROR: Failed to generate cloud-init ISO: {e}')
+        exit(1)
+
+def add_cidata_disk(cmd, cidata_iso):
+    """Add cloud-init ISO as a disk"""
+    cmd.extend(['-drive', f'file={cidata_iso},format=raw,if=none,id=cidata-disk',
+                '-device', 'virtio-blk-pci,drive=cidata-disk'])
 
 def add_vsock(cmd):
     cmd.extend(['-device', 'vhost-vsock-pci,guest-cid=3'])
@@ -147,11 +175,17 @@ def setup_ppcie(cmd):
         "-device", f"vfio-pci,host=0000:{nvswitches[3]},bus=pci.12,addr=0x0,iommufd=iommufd0",
     ])
 
-def do_run(img_path, vcpus, mem, gpus):
+def do_run(img_path, vcpus, mem, gpus, user, ssh_key, password, hostname):
     print(f'Run VM {vcpus} vcpus {mem} RAM')
     print(f'  Image: {img_path}')
+    print(f'  User: {user}')
     if len(gpus):
         print(f'  Passthrough GPUs: {gpus}')
+
+    # Generate cloud-init ISO with user configuration
+    if user:
+        cidata_iso = generate_cidata_iso(user, ssh_key, password, hostname)
+        print(f'  Cloud-init ISO: {cidata_iso}')
 
     cpu_args='host'
     # to avoid warning on 25.04
@@ -187,13 +221,17 @@ def do_run(img_path, vcpus, mem, gpus):
 
     add_vsock(qemu_cmds)
 
+    # Add cloud-init ISO if user is specified
+    if user:
+        add_cidata_disk(qemu_cmds, cidata_iso)
+
     if args.gpus and len(args.gpus) == 8:
         setup_ppcie(qemu_cmds)
     else:
         add_gpus(qemu_cmds, gpus)
 
     subprocess.run(qemu_cmds, stderr=subprocess.STDOUT)
-    do_print()
+    do_print(user)
 
 def run_td(args):
     global td_img
@@ -210,14 +248,37 @@ def run_td(args):
     if args.vcpus:
         td_vcpus=args.vcpus
 
-    do_run(td_img, td_vcpus, td_mem, args.gpus.split(',') if args.gpus else [])
+    # Validate user configuration
+    user = args.user
+    ssh_key = args.ssh_key
+    password = args.password
+    hostname = args.hostname
+
+    if not user:
+        print("ERROR: --user is required to specify the guest username")
+        exit(1)
+
+    if not ssh_key and not password:
+        print("ERROR: At least one authentication method required: --ssh-key or --password")
+        print("       Recommended: --ssh-key /path/to/public_key.pub")
+        exit(1)
+
+    do_run(td_img, td_vcpus, td_mem, args.gpus.split(',') if args.gpus else [],
+           user, ssh_key, password, hostname)
 
 if __name__ == '__main__':
-   parser = argparse.ArgumentParser()
+   parser = argparse.ArgumentParser(
+       description='Launch a TDX Trust Domain with runtime user configuration',
+       epilog='Example: ./run_td --image base.qcow2 --user alice --ssh-key ~/.ssh/id_rsa.pub'
+   )
    parser.add_argument("--image", type=str, help="Guest image")
    parser.add_argument("--vcpus", type=str, help="Number of VCPUs. 32 by default.", default='32')
    parser.add_argument("--mem", type=str, help="Memory. 100G by default", default='100G')
    parser.add_argument("--gpus", type=str, help="GPUs to pass-through")
+   parser.add_argument("--user", type=str, required=True, help="Guest username (required)")
+   parser.add_argument("--ssh-key", type=str, dest='ssh_key', help="Path to SSH public key file (recommended)")
+   parser.add_argument("--password", type=str, help="Guest password (alternative to SSH key)")
+   parser.add_argument("--hostname", type=str, default='tdx-guest', help="Guest hostname (default: tdx-guest)")
    parser.add_argument("--clean", action='store_true', help="Clean the current VM")
    parser.add_argument("--foreground", action='store_true', help="Run in foreground")
    args = parser.parse_args()

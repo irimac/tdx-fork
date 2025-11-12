@@ -1,13 +1,13 @@
-# tdvirsh_01 Quick Reference Summary
+# tdvirsh Quick Reference Summary
 
-**Last Updated:** November 4, 2025
+**Last Updated:** November 12, 2025
 **Status:** Production Ready ✅
 
 ---
 
 ## TL;DR
 
-`tdvirsh_01` is a **drop-in replacement** for the original `tdvirsh` that adds libvirt storage pool integration, enhanced security, and better documentation while maintaining 100% command-line compatibility.
+`tdvirsh` is a **drop-in replacement** for the original `tdvirsh` that adds libvirt storage pool integration, enhanced security, and better documentation while maintaining 100% command-line compatibility.
 
 **Recommendation:** Use for all new deployments.
 
@@ -15,7 +15,7 @@
 
 ## Quick Stats
 
-| Metric | Original | tdvirsh_01 | Change |
+| Metric | Original | tdvirsh | Change |
 |--------|----------|------------|---------|
 | **Lines** | 304 | 1,190 | +291% |
 | **Documentation** | ~20 lines | ~580 lines | +2800% |
@@ -30,7 +30,7 @@
 ### 1. Storage Pool Integration ✅
 ```bash
 # Before (original): /var/tmp/tdvirsh/ + qemu-img
-# After (tdvirsh_01): /var/lib/libvirt/images + virsh vol-*
+# After (tdvirsh): /var/lib/libvirt/images + virsh vol-*
 
 STORAGE_POOL_NAME="tdvirsh-pool"
 STORAGE_POOL_PATH="/var/lib/libvirt/images"
@@ -67,7 +67,7 @@ Permissions: 640 (rw-r-----)
 - Proper permissions set automatically
 ```
 
-**User Experience:** Just run `./tdvirsh_01 new` and it works!
+**User Experience:** Just run `./tdvirsh new` and it works!
 
 ---
 
@@ -75,13 +75,13 @@ Permissions: 640 (rw-r-----)
 
 #### `pool-info`
 ```bash
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 ```
 Shows pool status, capacity, and all volumes (base + overlays)
 
 #### `pool-cleanup`
 ```bash
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 ```
 Scans for and removes orphaned overlay volumes
 
@@ -103,41 +103,41 @@ Scans for and removes orphaned overlay volumes
 
 ```bash
 # Create VM (pool auto-created, image auto-imported)
-./tdvirsh_01 new
+./tdvirsh new
 
 # Create with custom image
-./tdvirsh_01 new -i /path/to/image.qcow2
+./tdvirsh new -i /path/to/image.qcow2
 
 # Create with GPU passthrough
-./tdvirsh_01 new -g 0000:17:00.0,0000:65:00.0
+./tdvirsh new -g 0000:17:00.0,0000:65:00.0
 
 # List all VMs with connection info
-./tdvirsh_01 list
+./tdvirsh list
 
 # Delete specific VM
-./tdvirsh_01 delete tdvirsh-trust_domain-abc123...
+./tdvirsh delete tdvirsh-trust_domain-abc123...
 
 # Delete all VMs
-./tdvirsh_01 delete all
+./tdvirsh delete all
 ```
 
 ### New Commands
 
 ```bash
 # Show pool status and volumes
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # Clean up orphaned overlays
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 ```
 
 ### Virsh Passthrough (Still Works)
 
 ```bash
 # Any virsh command
-./tdvirsh_01 console <domain>
-./tdvirsh_01 start <domain>
-./tdvirsh_01 shutdown <domain>
+./tdvirsh console <domain>
+./tdvirsh start <domain>
+./tdvirsh shutdown <domain>
 ```
 
 ---
@@ -203,7 +203,7 @@ rm -rf /var/tmp/tdvirsh/
 
 # 5. Switch to new version
 mv tdvirsh tdvirsh-original
-mv tdvirsh_01 tdvirsh
+mv tdvirsh tdvirsh
 
 # 6. Create new VMs (auto-setup happens)
 ./tdvirsh new
@@ -214,7 +214,7 @@ mv tdvirsh_01 tdvirsh
 
 ```bash
 # Keep both versions
-cp tdvirsh_01 /usr/local/bin/tdvirsh-new
+cp tdvirsh /usr/local/bin/tdvirsh-new
 cp tdvirsh /usr/local/bin/tdvirsh-old
 
 # Use old for existing VMs
@@ -232,7 +232,7 @@ mv /usr/local/bin/tdvirsh-new /usr/local/bin/tdvirsh
 
 ## Performance Impact
 
-| Operation | Original | tdvirsh_01 | Delta |
+| Operation | Original | tdvirsh | Delta |
 |-----------|----------|------------|-------|
 | **First VM creation** | 3.6s | 5.8s | +2.2s (one-time) |
 | **Subsequent VMs** | 3.6s | 3.8s | +0.2s |
@@ -243,7 +243,7 @@ mv /usr/local/bin/tdvirsh-new /usr/local/bin/tdvirsh
 
 ## When to Use Each Version
 
-### Use tdvirsh_01 When:
+### Use tdvirsh When:
 
 ✅ Starting new deployments
 ✅ Want modern pool management
@@ -263,12 +263,12 @@ mv /usr/local/bin/tdvirsh-new /usr/local/bin/tdvirsh
 
 ## Security Summary
 
-| Aspect | Original | tdvirsh_01 | Winner |
+| Aspect | Original | tdvirsh | Winner |
 |--------|----------|------------|---------|
-| **Permissions** | Unspecified | 640 (not world-readable) | tdvirsh_01 |
-| **Ownership** | Unspecified | root:qemu / qemu:qemu | tdvirsh_01 |
-| **Location** | /var/tmp | /var/lib/libvirt/images | tdvirsh_01 |
-| **SELinux/AppArmor** | No | Yes (standard contexts) | tdvirsh_01 |
+| **Permissions** | Unspecified | 640 (not world-readable) | tdvirsh |
+| **Ownership** | Unspecified | root:qemu / qemu:qemu | tdvirsh |
+| **Location** | /var/tmp | /var/lib/libvirt/images | tdvirsh |
+| **SELinux/AppArmor** | No | Yes (standard contexts) | tdvirsh |
 
 **Security Rating:** ✅ Suitable for production use
 
@@ -303,7 +303,7 @@ sudo usermod -aG libvirt $USER
 ls -l /path/to/image.qcow2
 
 # Check pool is running
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # Manual import
 sudo cp /path/to/image.qcow2 /var/lib/libvirt/images/
@@ -314,7 +314,7 @@ virsh pool-refresh tdvirsh-pool
 
 ```bash
 # Automatic cleanup
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 
 # Manual check
 virsh vol-list tdvirsh-pool
@@ -327,7 +327,7 @@ virsh vol-list tdvirsh-pool
 ### Create Single VM
 
 ```bash
-./tdvirsh_01 new
+./tdvirsh new
 # Output:
 # Creating storage pool 'tdvirsh-pool' at /var/lib/libvirt/images...
 # Storage pool 'tdvirsh-pool' created successfully.
@@ -346,26 +346,26 @@ lspci | grep NVIDIA
 # 0000:17:00.0 3D controller: NVIDIA Corporation ...
 
 # Create VM with GPU
-./tdvirsh_01 new -g 0000:17:00.0
+./tdvirsh new -g 0000:17:00.0
 
 # Verify
-./tdvirsh_01 list
+./tdvirsh list
 ```
 
 ### Create Multiple VMs
 
 ```bash
 # Create 3 VMs (share same base image)
-./tdvirsh_01 new
-./tdvirsh_01 new
-./tdvirsh_01 new
+./tdvirsh new
+./tdvirsh new
+./tdvirsh new
 
 # List all
-./tdvirsh_01 list
+./tdvirsh list
 # Shows 3 VMs, each with unique overlay
 
 # Check pool
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 # Shows 1 base + 3 overlays
 ```
 
@@ -373,13 +373,13 @@ lspci | grep NVIDIA
 
 ```bash
 # Delete all VMs
-./tdvirsh_01 delete all
+./tdvirsh delete all
 
 # Clean orphans (if any)
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 
 # Verify clean
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 # Shows only base image(s)
 ```
 
@@ -430,7 +430,7 @@ Information:
 
 For detailed information, see:
 
-- **[TDVIRSH_01_ANALYSIS.md](./TDVIRSH_01_ANALYSIS.md)** - Complete 50+ page analysis
+- **[TDVIRSH_ANALYSIS.md](./TDVIRSH_ANALYSIS.md)** - Complete 50+ page analysis
   - Architecture deep-dive
   - Security analysis
   - Code quality assessment
@@ -442,14 +442,14 @@ For detailed information, see:
 
 | Your Situation | Recommendation | Action |
 |----------------|----------------|--------|
-| **New deployment** | tdvirsh_01 | Install and use immediately |
-| **<5 existing VMs** | tdvirsh_01 | Migrate at convenience |
+| **New deployment** | tdvirsh | Install and use immediately |
+| **<5 existing VMs** | tdvirsh | Migrate at convenience |
 | **>5 existing VMs** | Keep original | Migrate gradually or stay |
-| **Development** | tdvirsh_01 | Better documented |
-| **CI/CD** | tdvirsh_01 | Zero-config setup |
-| **Learning TDX** | tdvirsh_01 | Comprehensive docs |
+| **Development** | tdvirsh | Better documented |
+| **CI/CD** | tdvirsh | Zero-config setup |
+| **Learning TDX** | tdvirsh | Comprehensive docs |
 | **Production (stable)** | Keep original | Don't fix what works |
-| **Production (new)** | tdvirsh_01 | Modern best practices |
+| **Production (new)** | tdvirsh | Modern best practices |
 
 ---
 
@@ -474,7 +474,7 @@ For detailed information, see:
 
 ### 🎯 Bottom Line
 
-**Use tdvirsh_01 for all new work.** It's a well-engineered, thoroughly documented enhancement that follows modern best practices while maintaining full backward compatibility.
+**Use tdvirsh for all new work.** It's a well-engineered, thoroughly documented enhancement that follows modern best practices while maintaining full backward compatibility.
 
 ---
 
@@ -484,16 +484,16 @@ For detailed information, see:
 
 ```bash
 # Built-in help
-./tdvirsh_01 --help
+./tdvirsh --help
 
 # Check pool status
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # View logs
 sudo journalctl -u libvirtd -f
 
 # Check domain
-./tdvirsh_01 dumpxml <domain>
+./tdvirsh dumpxml <domain>
 ```
 
 ### Common Issues
@@ -504,14 +504,14 @@ sudo journalctl -u libvirtd -f
 | Pool creation fails | Check /var/lib/libvirt/images permissions |
 | Image import fails | Verify image exists and is accessible |
 | GPU not visible | Verify IOMMU enabled, check vfio-pci binding |
-| Orphaned overlays | Run `./tdvirsh_01 pool-cleanup` |
+| Orphaned overlays | Run `./tdvirsh pool-cleanup` |
 
 ---
 
 ## Version Information
 
 ```
-Script: tdvirsh_01
+Script: tdvirsh
 Lines: 1,190 (304 original → +291%)
 Documentation: 580 lines (49% of file)
 Functions: 13 (11 original → +2)
@@ -529,7 +529,7 @@ Status: Production Ready ✅
 
 ```bash
 # Copy to system path
-sudo cp tdvirsh_01 /usr/local/bin/tdvirsh
+sudo cp tdvirsh /usr/local/bin/tdvirsh
 sudo chmod +x /usr/local/bin/tdvirsh
 
 # Test
@@ -542,15 +542,15 @@ tdvirsh new
 ```bash
 # Use directly from source
 cd /path/to/tdx-fork/guest-tools
-./tdvirsh_01 new
+./tdvirsh new
 
 # Or symlink
-sudo ln -s $(pwd)/tdvirsh_01 /usr/local/bin/tdvirsh
+sudo ln -s $(pwd)/tdvirsh /usr/local/bin/tdvirsh
 ```
 
 ---
 
-**For complete analysis, see [TDVIRSH_01_ANALYSIS.md](./TDVIRSH_01_ANALYSIS.md)**
+**For complete analysis, see [TDVIRSH_ANALYSIS.md](./TDVIRSH_ANALYSIS.md)**
 
-**Document Version:** 1.0
-**Last Updated:** November 4, 2025
+**Document Version:** 1.1
+**Last Updated:** November 12, 2025

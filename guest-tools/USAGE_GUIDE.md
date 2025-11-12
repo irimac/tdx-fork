@@ -1,6 +1,6 @@
 # TDvirsh Usage Guide
 
-Complete guide for using `tdvirsh_01` to manage TDX Trust Domains with libvirt storage pool integration.
+Complete guide for using `tdvirsh` to manage TDX Trust Domains with libvirt storage pool integration.
 
 ---
 
@@ -40,7 +40,7 @@ sudo usermod -aG libvirt $USER
 cd /home/rimac/VBoxShare/tdx/guest-tools/
 
 # Create TD with default settings
-./tdvirsh_01 new
+./tdvirsh new
 
 # The script will:
 # 1. Create storage pool at /var/lib/libvirt/images
@@ -54,7 +54,7 @@ cd /home/rimac/VBoxShare/tdx/guest-tools/
 
 ```bash
 # List all TDs with connection info
-./tdvirsh_01 list
+./tdvirsh list
 
 # Example output:
 # Id   Name                                State    (ip:192.168.122.45, hostfwd:2222, cid:3)
@@ -73,17 +73,17 @@ ssh -p 2222 tdx@localhost
 
 ```bash
 # Make executable
-chmod +x /path/to/tdvirsh_01
+chmod +x /path/to/tdvirsh
 
 # Run directly
-./tdvirsh_01 new
+./tdvirsh new
 ```
 
 ### Method 2: Install to PATH
 
 ```bash
 # Copy to system binary directory
-sudo cp tdvirsh_01 /usr/local/bin/tdvirsh
+sudo cp tdvirsh /usr/local/bin/tdvirsh
 
 # Now available system-wide
 tdvirsh new
@@ -93,7 +93,7 @@ tdvirsh new
 
 ```bash
 # Create symlink
-sudo ln -s /path/to/tdvirsh_01 /usr/local/bin/tdvirsh
+sudo ln -s /path/to/tdvirsh /usr/local/bin/tdvirsh
 
 # Use system-wide
 tdvirsh new
@@ -103,7 +103,7 @@ tdvirsh new
 
 ```bash
 # Check help
-./tdvirsh_01 --help
+./tdvirsh --help
 
 # Should display usage information
 ```
@@ -116,7 +116,7 @@ tdvirsh new
 
 **Syntax:**
 ```bash
-./tdvirsh_01 new [OPTIONS]
+./tdvirsh new [OPTIONS]
 ```
 
 **Options:**
@@ -128,22 +128,22 @@ tdvirsh new
 
 ```bash
 # Create TD with default image
-./tdvirsh_01 new
+./tdvirsh new
 
 # Create TD with custom image
-./tdvirsh_01 new -i /path/to/custom-image.qcow2
+./tdvirsh new -i /path/to/custom-image.qcow2
 
 # Create TD with GPU passthrough (single GPU)
-./tdvirsh_01 new -g 0000:17:00.0
+./tdvirsh new -g 0000:17:00.0
 
 # Create TD with multiple GPUs
-./tdvirsh_01 new -g 0000:17:00.0,0000:65:00.0
+./tdvirsh new -g 0000:17:00.0,0000:65:00.0
 
 # Create TD with custom template
-./tdvirsh_01 new -t /path/to/custom-template.xml
+./tdvirsh new -t /path/to/custom-template.xml
 
 # Combine all options
-./tdvirsh_01 new \
+./tdvirsh new \
   -i /path/to/image.qcow2 \
   -t /path/to/template.xml \
   -g 0000:17:00.0,0000:65:00.0
@@ -186,7 +186,7 @@ Used memory:    16777216 KiB
 
 **Syntax:**
 ```bash
-./tdvirsh_01 list
+./tdvirsh list
 ```
 
 **Output:**
@@ -215,18 +215,18 @@ Used memory:    16777216 KiB
 
 **Syntax:**
 ```bash
-./tdvirsh_01 delete <domain-name>
-./tdvirsh_01 delete all
+./tdvirsh delete <domain-name>
+./tdvirsh delete all
 ```
 
 **Examples:**
 
 ```bash
 # Delete specific TD
-./tdvirsh_01 delete tdvirsh-trust_domain-abc123-def456-...
+./tdvirsh delete tdvirsh-trust_domain-abc123-def456-...
 
 # Delete all TDs
-./tdvirsh_01 delete all
+./tdvirsh delete all
 ```
 
 **What Happens:**
@@ -264,7 +264,7 @@ Cleanup complete.
 
 **Syntax:**
 ```bash
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 ```
 
 **Output:**
@@ -300,7 +300,7 @@ Available:      886.28 GiB
 
 **Syntax:**
 ```bash
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 ```
 
 **What It Does:**
@@ -336,19 +336,19 @@ Removed 2 orphaned overlay volume(s).
 
 ```bash
 # Start a stopped TD
-./tdvirsh_01 start tdvirsh-trust_domain-abc123...
+./tdvirsh start tdvirsh-trust_domain-abc123...
 
 # Open console
-./tdvirsh_01 console tdvirsh-trust_domain-abc123...
+./tdvirsh console tdvirsh-trust_domain-abc123...
 
 # Show domain info
-./tdvirsh_01 dominfo tdvirsh-trust_domain-abc123...
+./tdvirsh dominfo tdvirsh-trust_domain-abc123...
 
 # Take snapshot
-./tdvirsh_01 snapshot-create-as tdvirsh-trust_domain-abc123... snap1
+./tdvirsh snapshot-create-as tdvirsh-trust_domain-abc123... snap1
 
 # Any other virsh command
-./tdvirsh_01 <virsh-command> [args]
+./tdvirsh <virsh-command> [args]
 ```
 
 ---
@@ -359,18 +359,18 @@ Removed 2 orphaned overlay volume(s).
 
 ```bash
 # Create first TD
-./tdvirsh_01 new
+./tdvirsh new
 # Note the domain name from output
 
 # Create second TD (shares same base image)
-./tdvirsh_01 new
+./tdvirsh new
 # Gets its own overlay
 
 # Create third TD
-./tdvirsh_01 new
+./tdvirsh new
 
 # List all
-./tdvirsh_01 list
+./tdvirsh list
 ```
 
 **Result:** 3 running TDs, each with its own overlay, all sharing the same base image.
@@ -381,19 +381,19 @@ Removed 2 orphaned overlay volume(s).
 
 ```bash
 # Create test TD
-./tdvirsh_01 new
+./tdvirsh new
 
 # Do testing...
 
 # Check pool status
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # Delete test TD
-./tdvirsh_01 delete tdvirsh-trust_domain-<uuid>
+./tdvirsh delete tdvirsh-trust_domain-<uuid>
 
 # Verify cleanup
-./tdvirsh_01 list
-./tdvirsh_01 pool-info
+./tdvirsh list
+./tdvirsh pool-info
 ```
 
 ---
@@ -403,15 +403,15 @@ Removed 2 orphaned overlay volume(s).
 ```bash
 # Create 5 TDs for testing
 for i in {1..5}; do
-    ./tdvirsh_01 new
+    ./tdvirsh new
     echo "Created TD $i"
 done
 
 # List all
-./tdvirsh_01 list
+./tdvirsh list
 
 # Delete all when done
-./tdvirsh_01 delete all
+./tdvirsh delete all
 ```
 
 ---
@@ -425,10 +425,10 @@ sudo ./create-td-image.sh -v 24.04 -u myuser -p mypass -o my-custom-image.qcow2
 
 # Use custom image
 cd ..
-./tdvirsh_01 new -i image/my-custom-image.qcow2
+./tdvirsh new -i image/my-custom-image.qcow2
 
 # Verify it was imported
-./tdvirsh_01 pool-info | grep my-custom-image
+./tdvirsh pool-info | grep my-custom-image
 ```
 
 ---
@@ -465,7 +465,7 @@ lspci -nn | grep NVIDIA
 
 ```bash
 # Pass single GPU
-./tdvirsh_01 new -g 0000:17:00.0
+./tdvirsh new -g 0000:17:00.0
 
 # The script will:
 # 1. Call setup-gpus.sh to prepare GPU
@@ -480,7 +480,7 @@ lspci -nn | grep NVIDIA
 
 ```bash
 # Pass multiple GPUs (comma-separated)
-./tdvirsh_01 new -g 0000:17:00.0,0000:65:00.0,0000:ca:00.0
+./tdvirsh new -g 0000:17:00.0,0000:65:00.0,0000:ca:00.0
 ```
 
 ### Verifying GPU in Guest
@@ -507,7 +507,7 @@ lspci -k -s 0000:17:00.0
 # Should show: Kernel driver in use: vfio-pci
 
 # Check domain XML includes hostdev
-./tdvirsh_01 dumpxml <domain> | grep hostdev
+./tdvirsh dumpxml <domain> | grep hostdev
 ```
 
 **Issue:** Invalid BDF format error
@@ -541,7 +541,7 @@ lspci -k -s 0000:17:00.0
 
 **First Run:**
 ```bash
-./tdvirsh_01 new
+./tdvirsh new
 # Pool doesn't exist
 # → Pool created
 # → Pool started
@@ -553,7 +553,7 @@ lspci -k -s 0000:17:00.0
 
 **Subsequent Runs:**
 ```bash
-./tdvirsh_01 new
+./tdvirsh new
 # Pool exists and is running
 # → Pool refreshed
 # → Base image already present
@@ -587,7 +587,7 @@ virsh pool-refresh tdvirsh-pool
 
 ```bash
 # List base images
-./tdvirsh_01 pool-info | grep -v overlay
+./tdvirsh pool-info | grep -v overlay
 
 # Copy base image out of pool
 cp /var/lib/libvirt/images/tdx-guest-ubuntu-24.04-generic.qcow2 \
@@ -603,14 +603,14 @@ virsh pool-refresh tdvirsh-pool
 
 ```bash
 # Check pool capacity
-./tdvirsh_01 pool-info | grep -E "Capacity|Allocation|Available"
+./tdvirsh pool-info | grep -E "Capacity|Allocation|Available"
 
 # Check overlay sizes
 cd /var/lib/libvirt/images
 ls -lh overlay.*.qcow2
 
 # Remove orphaned overlays
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 
 # Delete old base images (manual)
 # Be very careful!
@@ -680,13 +680,13 @@ ERROR: Base image not found at /path/to/image.qcow2
 ls -l /path/to/image.qcow2
 
 # Use absolute path
-./tdvirsh_01 new -i $(realpath /path/to/image.qcow2)
+./tdvirsh new -i $(realpath /path/to/image.qcow2)
 
 # Create image first
 cd image/
 sudo ./create-td-image.sh -v 24.04
 cd ..
-./tdvirsh_01 new
+./tdvirsh new
 ```
 
 ---
@@ -715,7 +715,7 @@ sudo cp /path/to/base.qcow2 /var/lib/libvirt/images/
 virsh pool-refresh tdvirsh-pool
 
 # Try again
-./tdvirsh_01 new
+./tdvirsh new
 ```
 
 ---
@@ -746,7 +746,7 @@ sudo ../gpu-cc/h100/setup-gpus.sh 0000:17:00.0
 lspci -k -s 0000:17:00.0 | grep vfio
 
 # Try again with sudo
-sudo ./tdvirsh_01 new -g 0000:17:00.0
+sudo ./tdvirsh new -g 0000:17:00.0
 ```
 
 ---
@@ -760,16 +760,16 @@ Cannot SSH to guest
 
 ```bash
 # Check VM is running
-./tdvirsh_01 list
+./tdvirsh list
 
 # Get connection info
-./tdvirsh_01 list | grep running
+./tdvirsh list | grep running
 
 # Try direct IP instead of hostfwd
 ssh tdx@<ip-address>
 
 # Check network interface in guest
-./tdvirsh_01 console <domain>
+./tdvirsh console <domain>
 # Login and run: ip addr
 
 # Restart networking in guest
@@ -790,10 +790,10 @@ Pool has overlays with no associated domains
 **Solution:**
 ```bash
 # List all volumes
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # Clean up orphans
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 
 # Should report removed volumes
 ```
@@ -811,13 +811,13 @@ libvirt guest XML template not found at path '/path/to/template.xml'
 
 ```bash
 # Use default template (don't specify -t)
-./tdvirsh_01 new
+./tdvirsh new
 
 # Verify template exists
 ls -l trust_domain.xml.template
 
 # Use absolute path
-./tdvirsh_01 new -t $(realpath trust_domain.xml.template)
+./tdvirsh new -t $(realpath trust_domain.xml.template)
 ```
 
 ---
@@ -836,7 +836,7 @@ cp trust_domain.xml.template my-custom-template.xml
 nano my-custom-template.xml
 
 # Use custom template
-./tdvirsh_01 new -t my-custom-template.xml
+./tdvirsh new -t my-custom-template.xml
 ```
 
 **Template Variables:**
@@ -863,7 +863,7 @@ export GUEST_HOSTNAME="my-tdx-host"
 export TDX_SETUP_INTEL_KERNEL="1"
 ```
 
-**Config is automatically sourced by tdvirsh_01**
+**Config is automatically sourced by tdvirsh**
 
 ---
 
@@ -875,13 +875,13 @@ export TDX_SETUP_INTEL_KERNEL="1"
 #!/bin/bash
 
 # Create TD
-DOMAIN=$(./tdvirsh_01 new 2>&1 | grep "Name:" | awk '{print $2}')
+DOMAIN=$(./tdvirsh new 2>&1 | grep "Name:" | awk '{print $2}')
 
 # Wait for boot
 sleep 30
 
 # Get IP
-IP=$(./tdvirsh_01 list | grep "$DOMAIN" | grep -oP 'ip:\K[0-9.]+')
+IP=$(./tdvirsh list | grep "$DOMAIN" | grep -oP 'ip:\K[0-9.]+')
 
 # Configure via SSH
 ssh-keygen -f ~/.ssh/known_hosts -R "$IP"
@@ -905,7 +905,7 @@ echo "TD $DOMAIN created at $IP"
 # generate-inventory.sh
 
 echo "[tdx_guests]"
-./tdvirsh_01 list | grep running | while read line; do
+./tdvirsh list | grep running | while read line; do
     IP=$(echo $line | grep -oP 'ip:\K[0-9.]+')
     NAME=$(echo $line | awk '{print $2}')
     echo "$NAME ansible_host=$IP ansible_user=tdx ansible_password=123456"
@@ -949,18 +949,18 @@ ansible -i inventory.ini tdx_guests -m ping
 
 1. **Monitor storage usage**
    ```bash
-   ./tdvirsh_01 pool-info
+   ./tdvirsh pool-info
    ```
 
 2. **Regular cleanup**
    ```bash
    # Weekly cleanup
-   ./tdvirsh_01 pool-cleanup
+   ./tdvirsh pool-cleanup
    ```
 
 3. **Delete unused TDs promptly**
    ```bash
-   ./tdvirsh_01 delete <unused-domain>
+   ./tdvirsh delete <unused-domain>
    ```
 
 ### Operational
@@ -987,7 +987,7 @@ ansible -i inventory.ini tdx_guests -m ping
 
 ## FAQ
 
-### Q: Can I use tdvirsh_01 alongside original tdvirsh?
+### Q: Can I use tdvirsh alongside original tdvirsh?
 
 **A:** Yes! They use different pool names and can coexist. However:
 - Original uses `/var/tmp/tdvirsh/`
@@ -1053,7 +1053,7 @@ Then create new TD with custom template.
 **A:** Yes, edit the script:
 
 ```bash
-# Change this line in tdvirsh_01
+# Change this line in tdvirsh
 STORAGE_POOL_PATH="/var/lib/libvirt/images"
 
 # To your preferred location
@@ -1081,16 +1081,16 @@ Or manually create pool before running script.
 
 ```bash
 # Create snapshot
-./tdvirsh_01 snapshot-create-as <domain> snap1
+./tdvirsh snapshot-create-as <domain> snap1
 
 # List snapshots
-./tdvirsh_01 snapshot-list <domain>
+./tdvirsh snapshot-list <domain>
 
 # Revert to snapshot
-./tdvirsh_01 snapshot-revert <domain> snap1
+./tdvirsh snapshot-revert <domain> snap1
 
 # Delete snapshot
-./tdvirsh_01 snapshot-delete <domain> snap1
+./tdvirsh snapshot-delete <domain> snap1
 ```
 
 ---
@@ -1126,7 +1126,7 @@ sudo journalctl -u libvirtd -f
 sudo journalctl -xe
 
 # VM console
-./tdvirsh_01 console <domain>
+./tdvirsh console <domain>
 ```
 
 ### Debugging
@@ -1139,7 +1139,7 @@ virsh -d 0 list --all
 virsh pool-info tdvirsh-pool
 
 # Check domain XML
-./tdvirsh_01 dumpxml <domain>
+./tdvirsh dumpxml <domain>
 
 # Check volume details
 virsh vol-info --pool tdvirsh-pool <volume>

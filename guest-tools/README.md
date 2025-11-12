@@ -1,6 +1,6 @@
 # TDX Guest Tools - tdvirsh Documentation Package
 
-Complete documentation for the `tdvirsh_claude_01` Trust Domain management tool.
+Complete documentation for the `tdvirsh` Trust Domain management tool.
 
 ---
 
@@ -9,16 +9,16 @@ Complete documentation for the `tdvirsh_claude_01` Trust Domain management tool.
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | **[USAGE_GUIDE.md](./USAGE_GUIDE.md)** | Complete user manual | End users, operators |
-| **[TDVIRSH_01_SUMMARY.md](./TDVIRSH_01_SUMMARY.md)** | Quick reference guide | All users |
-| **[TDVIRSH_01_ANALYSIS.md](./TDVIRSH_01_ANALYSIS.md)** | Complete technical analysis | Developers, decision makers |
+| **[TDVIRSH_SUMMARY.md](./TDVIRSH_SUMMARY.md)** | Quick reference guide | All users |
+| **[TDVIRSH_ANALYSIS.md](./TDVIRSH_ANALYSIS.md)** | Complete technical analysis | Developers, decision makers |
 | **[DEVELOPMENT_LOG.md](./DEVELOPMENT_LOG.md)** | Implementation details & rationale | Developers, maintainers |
-| **tdvirsh_01** (script) | The enhanced tool (heavily commented) | Developers, code reviewers |
+| **tdvirsh** (script) | The enhanced tool (heavily commented) | Developers, code reviewers |
 
 ---
 
-## What is tdvirsh_01?
+## What is tdvirsh?
 
-A **production-ready** wrapper around `virsh` for managing Intel TDX Trust Domains with integrated libvirt storage pool support.
+A **production-ready** wrapper around `virsh` for managing Intel TDX Trust Domains with integrated libvirt storage pool support and runtime user configuration.
 
 ### Key Features
 
@@ -36,22 +36,22 @@ A **production-ready** wrapper around `virsh` for managing Intel TDX Trust Domai
 
 ```bash
 # Make executable
-chmod +x tdvirsh_01
+chmod +x tdvirsh
 
 # Create your first TD (auto-creates pool and imports image)
-./tdvirsh_01 new
+./tdvirsh new
 
 # List all TDs with connection info
-./tdvirsh_01 list
+./tdvirsh list
 
 # Check pool status
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 
 # Delete a TD
-./tdvirsh_01 delete <domain-name>
+./tdvirsh delete <domain-name>
 
 # Clean orphaned volumes
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 ```
 
 ---
@@ -79,7 +79,7 @@ chmod +x tdvirsh_01
 
 ---
 
-### 2. TDVIRSH_01_SUMMARY.md - **Quick Reference**
+### 2. TDVIRSH_SUMMARY.md - **Quick Reference**
 
 **Best for:** All users needing quick answers
 
@@ -100,7 +100,7 @@ chmod +x tdvirsh_01
 
 ---
 
-### 3. TDVIRSH_01_ANALYSIS.md - **Complete Technical Analysis**
+### 3. TDVIRSH_ANALYSIS.md - **Complete Technical Analysis**
 
 **Best for:** Developers, architects, decision makers
 
@@ -143,7 +143,7 @@ chmod +x tdvirsh_01
 
 ---
 
-### 5. tdvirsh_01 (Script) - **The Source Code**
+### 5. tdvirsh (Script) - **The Source Code**
 
 **Best for:** Code review, learning, debugging
 
@@ -163,22 +163,21 @@ chmod +x tdvirsh_01
 
 ---
 
-## Version Comparison at a Glance
+## Feature Overview
 
-| Feature | Original tdvirsh | **tdvirsh_01** |
-|---------|------------------|----------------|
-| **Production Ready** | ✅ Yes | ✅ **Yes** |
-| **Storage Pools** | ❌ No | ✅ **Full Support** |
-| **GPU Setup** | ✅ Yes | ✅ **Yes** |
-| **Graceful Shutdown** | ✅ Yes | ✅ **Yes** |
-| **Connection Info** | ✅ Full | ✅ **Full** |
-| **Portable** | ✅ Yes | ✅ **Yes** |
-| **Pool Management** | ❌ No | ✅ **pool-info/cleanup** |
-| **Security** | Basic | ✅ **Enhanced (640 perms)** |
-| **Lines of Code** | 304 | **1,190** |
-| **Documentation** | Minimal (~20 lines) | **Comprehensive (~580 lines)** |
-
-**Verdict:** Use `tdvirsh_01` for all new work.
+| Feature | Status |
+|---------|--------|
+| **Production Ready** | ✅ Yes |
+| **Storage Pools** | ✅ Full Support |
+| **Runtime User Config** | ✅ SSH key / Password injection |
+| **GPU Setup** | ✅ Yes |
+| **Graceful Shutdown** | ✅ Yes |
+| **Connection Info** | ✅ Full (IP, SSH port, vSOCK CID) |
+| **Portable** | ✅ Yes |
+| **Pool Management** | ✅ pool-info/cleanup commands |
+| **Security** | ✅ Enhanced (640 perms, SSH keys) |
+| **Lines of Code** | 1,290 (heavily commented) |
+| **Documentation** | ✅ Comprehensive |
 
 ---
 
@@ -187,13 +186,12 @@ chmod +x tdvirsh_01
 ```
 guest-tools/
 ├── README.md                      # This file - documentation index
-├── TDVIRSH_01_SUMMARY.md          # Quick reference guide ⭐
-├── TDVIRSH_01_ANALYSIS.md         # Complete technical analysis
+├── TDVIRSH_SUMMARY.md             # Quick reference guide ⭐
+├── TDVIRSH_ANALYSIS.md            # Complete technical analysis
 ├── USAGE_GUIDE.md                 # Complete user manual
 ├── TDVIRSH_COMPARISON.md          # Legacy comparison document
 ├── DEVELOPMENT_LOG.md             # Implementation log (technical)
-├── tdvirsh                        # Original version (keep for reference)
-├── tdvirsh_01                     # Enhanced version (recommended) ⭐
+├── tdvirsh                        # Production-ready TD manager ⭐
 ├── trust_domain.xml.template      # Libvirt XML template
 └── trust_domain-sb.xml.template   # Secure Boot template
 ```
@@ -206,34 +204,34 @@ guest-tools/
 
 ```bash
 # Create TD with defaults
-./tdvirsh_01 new
+./tdvirsh new
 
 # Create TD with custom image
-./tdvirsh_01 new -i /path/to/custom-image.qcow2
+./tdvirsh new -i /path/to/custom-image.qcow2
 
 # Create TD with GPU passthrough
-./tdvirsh_01 new -g 0000:17:00.0
+./tdvirsh new -g 0000:17:00.0
 
 # List all TDs with connection details
-./tdvirsh_01 list
+./tdvirsh list
 # Output: Id Name  State  (ip:192.168.122.45, hostfwd:2222, cid:3)
 
 # Delete specific TD
-./tdvirsh_01 delete tdvirsh-trust_domain-abc123...
+./tdvirsh delete tdvirsh-trust_domain-abc123...
 
 # Delete all TDs
-./tdvirsh_01 delete all
+./tdvirsh delete all
 ```
 
 ### Pool Management
 
 ```bash
 # Show pool information
-./tdvirsh_01 pool-info
+./tdvirsh pool-info
 # Shows: pool status, capacity, all volumes
 
 # Clean up orphaned overlays
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 # Scans and removes unused overlay volumes
 ```
 
@@ -241,7 +239,7 @@ guest-tools/
 
 ```bash
 # After creating TD
-./tdvirsh_01 list
+./tdvirsh list
 
 # Note the hostfwd port (e.g., 2222)
 ssh -p 2222 tdx@localhost
@@ -265,7 +263,7 @@ qemu-img create -b base.qcow2 overlay.qcow2
 # Manual cleanup with rm
 ```
 
-**After (tdvirsh_01):**
+**After (tdvirsh):**
 ```bash
 # Native libvirt API
 virsh vol-create-as pool overlay 0 --backing-vol base
@@ -285,7 +283,7 @@ virsh vol-delete --pool pool overlay
 
 **pool-info** - Show storage pool status
 ```bash
-$ ./tdvirsh_01 pool-info
+$ ./tdvirsh pool-info
 === Storage Pool Information ===
 Name:           tdvirsh-pool
 State:          running
@@ -302,7 +300,7 @@ Available:      886.28 GiB
 
 **pool-cleanup** - Remove orphaned overlays
 ```bash
-$ ./tdvirsh_01 pool-cleanup
+$ ./tdvirsh pool-cleanup
 Scanning for orphaned overlay volumes...
 Found orphaned overlay: overlay.OldOne123.qcow2, removing...
 Removed 1 orphaned overlay volume(s).
@@ -329,18 +327,18 @@ Base image imported successfully.
 ### Option 1: Direct Use (Recommended)
 ```bash
 cd /path/to/tdx-fork/guest-tools/
-./tdvirsh_01 new
+./tdvirsh new
 ```
 
 ### Option 2: Install to PATH
 ```bash
-sudo cp tdvirsh_01 /usr/local/bin/tdvirsh
+sudo cp tdvirsh /usr/local/bin/tdvirsh
 tdvirsh new  # Available system-wide
 ```
 
 ### Option 3: Symlink
 ```bash
-sudo ln -s $(pwd)/tdvirsh_01 /usr/local/bin/tdvirsh
+sudo ln -s $(pwd)/tdvirsh /usr/local/bin/tdvirsh
 ```
 
 ---
@@ -399,65 +397,49 @@ lspci -k -s 0000:17:00.0
 ### Orphaned Overlays After Crash
 ```bash
 # Clean up automatically
-./tdvirsh_01 pool-cleanup
+./tdvirsh pool-cleanup
 ```
 
 **For more troubleshooting, see [USAGE_GUIDE.md](./USAGE_GUIDE.md#troubleshooting)**
 
 ---
 
-## Migration from Original tdvirsh
+## Getting Started
 
-### Quick Migration (5 minutes)
+### First Time Setup
 
 ```bash
-# 1. Backup original
-cp tdvirsh tdvirsh.backup
+# 1. Create a base TD image
+cd guest-tools/image/
+sudo ./create-td-image.sh -v 25.04
 
-# 2. Test new version
-./tdvirsh_01 new
+# 2. Launch a TD with your user configuration
+cd ..
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 
-# 3. Verify it works
-./tdvirsh_01 list
-./tdvirsh_01 pool-info
+# 3. Verify it's running
+./tdvirsh list
 
-# 4. Replace if satisfied
-mv tdvirsh tdvirsh.original
-cp tdvirsh_01 tdvirsh
+# 4. Check pool status
+./tdvirsh pool-info
 ```
 
-### What Changes
+### Storage Location
 
-✅ **Compatible:**
-- All command-line arguments
-- Config file (setup-tdx-config)
-- XML templates
-- GPU BDF format
-- Existing base images (auto-imported)
-
-⚠️ **Changed:**
-- Storage location (/var/tmp → /var/lib/libvirt/images)
-- Overlay creation method
-- Overlay cleanup method
-
-❌ **Not Compatible:**
-- Cannot reuse existing overlays from /var/tmp
-- Must recreate VMs (not migrate running VMs)
-
-**For detailed migration guide, see [TDVIRSH_01_ANALYSIS.md](./TDVIRSH_01_ANALYSIS.md#compatibility-assessment)**
+- **Pool**: `/var/lib/libvirt/images`
+- **Base images**: Auto-imported to pool on first use
+- **Overlays**: Created per-VM in pool
+- **User data**: Runtime cloud-init ISOs in pool
 
 ---
 
 ## FAQ
 
-### Q: Can I use both versions simultaneously?
-**A:** Yes, but be aware:
-- Different storage locations (/var/tmp vs /var/lib/libvirt/images)
-- Different pool names
-- Domain name prefix is the same (possible conflict)
-
-### Q: What happens to my existing VMs?
-**A:** tdvirsh_01 won't see VMs created by original tdvirsh. They use different storage locations. You can keep both or migrate.
+### Q: Where are VM images stored?
+**A:** All images are stored in the libvirt storage pool at `/var/lib/libvirt/images`:
+- Base images are auto-imported on first use
+- Per-VM overlay images (copy-on-write)
+- Cloud-init ISOs for user configuration
 
 ### Q: Is it safe for production?
 **A:** Yes. It includes:
@@ -502,13 +484,13 @@ STORAGE_POOL_PATH="/your/custom/path"
 ### Getting Help
 ```bash
 # Check script help
-./tdvirsh_01 --help
+./tdvirsh --help
 
 # Check logs
 sudo journalctl -u libvirtd -f
 
 # Check VM console
-./tdvirsh_01 console <domain>
+./tdvirsh console <domain>
 
 # Debug pool
 virsh pool-info tdvirsh-pool
@@ -527,7 +509,7 @@ This documentation package was created as part of an analysis and enhancement ef
 4. **Implement** a production-ready version with all features
 5. **Document** everything comprehensively for future users
 
-The result is `tdvirsh_01` - an enhanced solution that combines:
+The result is `tdvirsh` - an enhanced solution that combines:
 - Production readiness of the original
 - Modern storage pool approach
 - Enhanced features for better management
@@ -548,7 +530,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 | Date | Version | Description |
 |------|---------|-------------|
-| 2025-11-04 | 2.0 | Updated for tdvirsh_01 with comprehensive analysis |
+| 2025-11-04 | 2.0 | Updated for tdvirsh with comprehensive analysis |
 | 2025-11-03 | 1.0 | Initial release with complete documentation package |
 
 ---
