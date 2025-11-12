@@ -359,8 +359,8 @@ cd tdx/guest-tools
    NOTE 1: If you booted your TD with `tdvirsh`, you will likely need a different port number from the one below.
            The tool will print the appropriate port to use after it has successfully booted the TD.
 
-   NOTE 2: Replace `<username>` with the guest username you configured (default: "tdx").
-           Authentication uses SSH keys by default for security.
+   NOTE 2: Replace `<username>` with the guest username you specified when launching the TD with `--user`.
+           Authentication uses SSH keys by default for security (configured with `--ssh-key`).
 
    * From the local host:
    ```bash

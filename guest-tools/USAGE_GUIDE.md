@@ -2,6 +2,12 @@
 
 Complete guide for using `tdvirsh` to manage TDX Trust Domains with libvirt storage pool integration.
 
+**IMPORTANT:** As of the runtime user injection update, all `tdvirsh new` commands REQUIRE:
+- `--user <username>` to specify the guest username
+- At least one authentication method: `--ssh-key <path>` (recommended) or `--password <password>`
+
+Example: `./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub`
+
 ---
 
 ## Table of Contents
@@ -39,15 +45,16 @@ sudo usermod -aG libvirt $USER
 ```bash
 cd /home/rimac/VBoxShare/tdx/guest-tools/
 
-# Create TD with default settings
-./tdvirsh new
+# Create TD with user configuration (required)
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # The script will:
 # 1. Create storage pool at /var/lib/libvirt/images
 # 2. Import base image to pool
-# 3. Create overlay volume
-# 4. Boot the VM
-# 5. Display connection info
+# 3. Generate cloud-init ISO with user configuration
+# 4. Create overlay volume
+# 5. Boot the VM
+# 6. Display connection info
 ```
 
 ### Connect to Your TD
@@ -60,9 +67,9 @@ cd /home/rimac/VBoxShare/tdx/guest-tools/
 # Id   Name                                State    (ip:192.168.122.45, hostfwd:2222, cid:3)
 # 1    tdvirsh-trust_domain-abc123...     running  (ip:192.168.122.45, hostfwd:2222, cid:3)
 
-# SSH into the TD
-ssh -p 2222 tdx@localhost
-# Default password: 123456 (change this!)
+# SSH into the TD (use the username you specified with --user)
+ssh -p 2222 alice@localhost
+# Authentication via SSH key (configured with --ssh-key)
 ```
 
 ---
@@ -76,7 +83,7 @@ ssh -p 2222 tdx@localhost
 chmod +x /path/to/tdvirsh
 
 # Run directly
-./tdvirsh new
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 ```
 
 ### Method 2: Install to PATH
@@ -86,7 +93,7 @@ chmod +x /path/to/tdvirsh
 sudo cp tdvirsh /usr/local/bin/tdvirsh
 
 # Now available system-wide
-tdvirsh new
+tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 ```
 
 ### Method 3: Symlink
@@ -96,7 +103,7 @@ tdvirsh new
 sudo ln -s /path/to/tdvirsh /usr/local/bin/tdvirsh
 
 # Use system-wide
-tdvirsh new
+tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 ```
 
 ### Verify Installation
@@ -120,6 +127,10 @@ tdvirsh new
 ```
 
 **Options:**
+- `-u, --user USERNAME` - Guest username (REQUIRED)
+- `-k, --ssh-key PATH` - Path to SSH public key file (recommended)
+- `-p, --password PASSWORD` - Guest password (alternative to SSH key)
+- `-n, --hostname HOSTNAME` - Guest hostname (default: tdx-guest)
 - `-i, --td-image PATH` - Path to base image (auto-imported to pool)
 - `-t, --xml-template PATH` - Path to libvirt XML template
 - `-g, --gpus BDF_LIST` - Comma-separated list of GPU BDFs for passthrough
@@ -127,36 +138,47 @@ tdvirsh new
 **Examples:**
 
 ```bash
-# Create TD with default image
-./tdvirsh new
+# Create TD with user and SSH key (minimum required)
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
+
+# Create TD with password authentication (alternative)
+./tdvirsh new --user bob --password mysecurepass
 
 # Create TD with custom image
-./tdvirsh new -i /path/to/custom-image.qcow2
+./tdvirsh new -i /path/to/custom-image.qcow2 --user charlie --ssh-key ~/.ssh/id_rsa.pub
 
 # Create TD with GPU passthrough (single GPU)
-./tdvirsh new -g 0000:17:00.0
+./tdvirsh new -g 0000:17:00.0 --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # Create TD with multiple GPUs
-./tdvirsh new -g 0000:17:00.0,0000:65:00.0
+./tdvirsh new -g 0000:17:00.0,0000:65:00.0 --user alice --ssh-key ~/.ssh/id_rsa.pub
+
+# Create TD with custom hostname
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub --hostname alice-workstation
 
 # Create TD with custom template
-./tdvirsh new -t /path/to/custom-template.xml
+./tdvirsh new -t /path/to/custom-template.xml --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # Combine all options
 ./tdvirsh new \
+  --user alice \
+  --ssh-key ~/.ssh/id_rsa.pub \
+  --hostname production-td \
   -i /path/to/image.qcow2 \
   -t /path/to/template.xml \
   -g 0000:17:00.0,0000:65:00.0
 ```
 
 **What Happens:**
-1. Storage pool checked/created at `/var/lib/libvirt/images`
-2. Base image imported to pool (if not already present)
-3. GPU setup script executed (if `-g` specified)
-4. Overlay volume created in pool
-5. Domain XML generated
-6. VM defined and started
-7. Connection info displayed
+1. Validates user configuration (--user and auth method required)
+2. Storage pool checked/created at `/var/lib/libvirt/images`
+3. Base image imported to pool (if not already present)
+4. Cloud-init ISO generated with user configuration
+5. GPU setup script executed (if `-g` specified)
+6. Overlay volume created in pool
+7. Domain XML generated with cloud-init ISO attachment
+8. VM defined and started
+9. Connection info displayed
 
 **Output:**
 ```
@@ -419,13 +441,13 @@ done
 ### Workflow 4: Custom Image Workflow
 
 ```bash
-# Create custom image
+# Create custom base image (generic, no user data)
 cd image/
-sudo ./create-td-image.sh -v 24.04 -u myuser -p mypass -o my-custom-image.qcow2
+sudo ./create-td-image.sh -v 24.04 -o my-custom-image.qcow2
 
-# Use custom image
+# Use custom image with user configuration at runtime
 cd ..
-./tdvirsh new -i image/my-custom-image.qcow2
+./tdvirsh new -i image/my-custom-image.qcow2 --user myuser --ssh-key ~/.ssh/id_rsa.pub
 
 # Verify it was imported
 ./tdvirsh pool-info | grep my-custom-image

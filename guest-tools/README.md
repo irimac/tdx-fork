@@ -39,7 +39,7 @@ A **production-ready** wrapper around `virsh` for managing Intel TDX Trust Domai
 chmod +x tdvirsh
 
 # Create your first TD (auto-creates pool and imports image)
-./tdvirsh new
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # List all TDs with connection info
 ./tdvirsh list
@@ -203,14 +203,14 @@ guest-tools/
 ### Basic Operations
 
 ```bash
-# Create TD with defaults
-./tdvirsh new
+# Create TD with user and SSH key (required)
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # Create TD with custom image
-./tdvirsh new -i /path/to/custom-image.qcow2
+./tdvirsh new -i /path/to/custom-image.qcow2 --user bob --ssh-key ~/.ssh/id_rsa.pub
 
 # Create TD with GPU passthrough
-./tdvirsh new -g 0000:17:00.0
+./tdvirsh new -g 0000:17:00.0 --user charlie --ssh-key ~/.ssh/id_rsa.pub
 
 # List all TDs with connection details
 ./tdvirsh list
@@ -241,13 +241,13 @@ guest-tools/
 # After creating TD
 ./tdvirsh list
 
-# Note the hostfwd port (e.g., 2222)
-ssh -p 2222 tdx@localhost
+# Note the hostfwd port (e.g., 2222) and use your username
+ssh -p 2222 alice@localhost
 
 # Or use IP directly
-ssh tdx@192.168.122.45
+ssh alice@192.168.122.45
 
-# Default password: 123456 (change immediately!)
+# Authentication is via SSH key (configured with --ssh-key during TD creation)
 ```
 
 ---
@@ -327,13 +327,13 @@ Base image imported successfully.
 ### Option 1: Direct Use (Recommended)
 ```bash
 cd /path/to/tdx-fork/guest-tools/
-./tdvirsh new
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 ```
 
 ### Option 2: Install to PATH
 ```bash
 sudo cp tdvirsh /usr/local/bin/tdvirsh
-tdvirsh new  # Available system-wide
+tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub  # Available system-wide
 ```
 
 ### Option 3: Symlink
