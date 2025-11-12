@@ -67,7 +67,7 @@ Permissions: 640 (rw-r-----)
 - Proper permissions set automatically
 ```
 
-**User Experience:** Just run `./tdvirsh new` and it works!
+**User Experience:** Just run `./tdvirsh new --user <name> --ssh-key <path>` and it works!
 
 ---
 
@@ -102,14 +102,14 @@ Scans for and removes orphaned overlay volumes
 ### All Original Commands Still Work
 
 ```bash
-# Create VM (pool auto-created, image auto-imported)
-./tdvirsh new
+# Create VM (pool auto-created, image auto-imported, user config required)
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # Create with custom image
-./tdvirsh new -i /path/to/image.qcow2
+./tdvirsh new -i /path/to/image.qcow2 --user bob --ssh-key ~/.ssh/id_rsa.pub
 
 # Create with GPU passthrough
-./tdvirsh new -g 0000:17:00.0,0000:65:00.0
+./tdvirsh new -g 0000:17:00.0,0000:65:00.0 --user charlie --ssh-key ~/.ssh/id_rsa.pub
 
 # List all VMs with connection info
 ./tdvirsh list
@@ -206,7 +206,7 @@ mv tdvirsh tdvirsh-original
 mv tdvirsh tdvirsh
 
 # 6. Create new VMs (auto-setup happens)
-./tdvirsh new
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 ./tdvirsh pool-info
 ```
 
@@ -327,7 +327,7 @@ virsh vol-list tdvirsh-pool
 ### Create Single VM
 
 ```bash
-./tdvirsh new
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 # Output:
 # Creating storage pool 'tdvirsh-pool' at /var/lib/libvirt/images...
 # Storage pool 'tdvirsh-pool' created successfully.
@@ -346,7 +346,7 @@ lspci | grep NVIDIA
 # 0000:17:00.0 3D controller: NVIDIA Corporation ...
 
 # Create VM with GPU
-./tdvirsh new -g 0000:17:00.0
+./tdvirsh new -g 0000:17:00.0 --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # Verify
 ./tdvirsh list
@@ -355,14 +355,14 @@ lspci | grep NVIDIA
 ### Create Multiple VMs
 
 ```bash
-# Create 3 VMs (share same base image)
-./tdvirsh new
-./tdvirsh new
-./tdvirsh new
+# Create 3 VMs (share same base image, different users)
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
+./tdvirsh new --user bob --ssh-key ~/.ssh/id_rsa.pub
+./tdvirsh new --user charlie --ssh-key ~/.ssh/id_rsa.pub
 
 # List all
 ./tdvirsh list
-# Shows 3 VMs, each with unique overlay
+# Shows 3 VMs, each with unique overlay and user
 
 # Check pool
 ./tdvirsh pool-info
@@ -534,7 +534,7 @@ sudo chmod +x /usr/local/bin/tdvirsh
 
 # Test
 tdvirsh --help
-tdvirsh new
+tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 ```
 
 ### Development Install
@@ -542,7 +542,7 @@ tdvirsh new
 ```bash
 # Use directly from source
 cd /path/to/tdx-fork/guest-tools
-./tdvirsh new
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 
 # Or symlink
 sudo ln -s $(pwd)/tdvirsh /usr/local/bin/tdvirsh
