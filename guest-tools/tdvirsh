@@ -76,7 +76,7 @@ XML_TEMPLATE_DEFAULT=${SCRIPT_DIR}/trust_domain.xml.template
 
 # Libvirt storage pool name
 # This pool manages all base images and overlay volumes
-STORAGE_POOL_NAME="tdvirsh-pool"
+STORAGE_POOL_NAME="libvirt-pool"
 
 # Storage pool directory path
 # Standard libvirt location for images
@@ -147,6 +147,7 @@ Available commands:
 new [OPTIONS]               Create and run a new Trust Domain (TD)
     --td-image|-i PATH        TD image path (default: ./image/tdx-guest-ubuntu-${UBUNTU_VERSION}-generic.qcow2)
     --xml-template|-t PATH    XML template path (default: ./trust_domain.xml.template)
+    --pool POOL_NAME          Storage pool name (default: libvirt-pool)
     --user|-u USERNAME        Guest username (REQUIRED)
     --ssh-key|-k PATH         SSH public key file (recommended)
     --password|-p PASSWORD    Guest password (alternative to SSH key)
@@ -183,6 +184,9 @@ Examples:
 
   # Create TD with GPU passthrough
   ./$(basename "${BASH_SOURCE[0]}") new -u charlie -k ~/.ssh/id_rsa.pub -g 0000:17:00.0,0000:65:00.0
+
+  # Create TD with custom storage pool
+  ./$(basename "${BASH_SOURCE[0]}") new -u dave -k ~/.ssh/id_rsa.pub --pool my-custom-pool
 
   # List all TDs with connection info
   ./$(basename "${BASH_SOURCE[0]}") list
@@ -1192,6 +1196,11 @@ parse_params() {
                     -n | --hostname)
                         # Guest hostname specified
                         guest_hostname="${2-}"
+                        shift 2
+                        ;;
+                    --pool)
+                        # Storage pool name specified
+                        STORAGE_POOL_NAME="${2-}"
                         shift 2
                         ;;
                     -g | --gpus)
