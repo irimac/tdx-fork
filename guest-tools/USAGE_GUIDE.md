@@ -133,6 +133,7 @@ tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 - `-n, --hostname HOSTNAME` - Guest hostname (default: tdx-guest)
 - `-i, --td-image PATH` - Path to base image (auto-imported to pool)
 - `-t, --xml-template PATH` - Path to libvirt XML template
+- `--pool POOL_NAME` - Storage pool name (default: libvirt-pool)
 - `-g, --gpus BDF_LIST` - Comma-separated list of GPU BDFs for passthrough
 
 **Examples:**
@@ -159,11 +160,15 @@ tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 # Create TD with custom template
 ./tdvirsh new -t /path/to/custom-template.xml --user alice --ssh-key ~/.ssh/id_rsa.pub
 
+# Create TD with custom storage pool
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub --pool my-custom-pool
+
 # Combine all options
 ./tdvirsh new \
   --user alice \
   --ssh-key ~/.ssh/id_rsa.pub \
   --hostname production-td \
+  --pool my-custom-pool \
   -i /path/to/image.qcow2 \
   -t /path/to/template.xml \
   -g 0000:17:00.0,0000:65:00.0
@@ -1070,15 +1075,20 @@ Then create new TD with custom template.
 
 ---
 
-### Q: Can I use different storage pool location?
+### Q: Can I use different storage pool name or location?
 
-**A:** Yes, edit the script:
+**A:** Yes, use the `--pool` option to specify a custom pool name:
 
 ```bash
-# Change this line in tdvirsh
-STORAGE_POOL_PATH="/var/lib/libvirt/images"
+# Use custom pool name
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub --pool my-custom-pool
+```
 
-# To your preferred location
+Or edit the default values in the script:
+
+```bash
+# Change these lines in tdvirsh
+STORAGE_POOL_NAME="my-custom-pool"
 STORAGE_POOL_PATH="/my/custom/path"
 ```
 

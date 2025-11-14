@@ -41,6 +41,9 @@ chmod +x tdvirsh
 # Create your first TD (auto-creates pool and imports image)
 ./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 
+# Create TD with custom storage pool
+./tdvirsh new --user bob --ssh-key ~/.ssh/id_rsa.pub --pool my-custom-pool
+
 # List all TDs with connection info
 ./tdvirsh list
 
@@ -219,6 +222,9 @@ guest-tools/
 
 # Create TD with GPU passthrough
 ./tdvirsh new -g 0000:17:00.0 --user charlie --ssh-key ~/.ssh/id_rsa.pub
+
+# Create TD with custom storage pool
+./tdvirsh new --user dave --ssh-key ~/.ssh/id_rsa.pub --pool my-custom-pool
 
 # List all TDs with connection details
 ./tdvirsh list
@@ -543,9 +549,15 @@ However, it's newer than the original, so consider:
 - Gradual rollout
 - Keeping original as backup
 
-### Q: Can I change the storage pool location?
-**A:** Yes, edit `STORAGE_POOL_PATH` in the script:
+### Q: Can I change the storage pool name or location?
+**A:** Yes, you can specify a custom pool name using the `--pool` option:
 ```bash
+./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub --pool my-custom-pool
+```
+
+Or edit the default values in the script:
+```bash
+STORAGE_POOL_NAME="my-custom-pool"
 STORAGE_POOL_PATH="/your/custom/path"
 ```
 

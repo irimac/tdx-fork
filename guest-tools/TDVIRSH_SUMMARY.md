@@ -111,6 +111,9 @@ Scans for and removes orphaned overlay volumes
 # Create with GPU passthrough
 ./tdvirsh new -g 0000:17:00.0,0000:65:00.0 --user charlie --ssh-key ~/.ssh/id_rsa.pub
 
+# Create with custom storage pool
+./tdvirsh new --user dave --ssh-key ~/.ssh/id_rsa.pub --pool my-custom-pool
+
 # List all VMs with connection info
 ./tdvirsh list
 
@@ -359,6 +362,9 @@ lspci | grep NVIDIA
 ./tdvirsh new --user alice --ssh-key ~/.ssh/id_rsa.pub
 ./tdvirsh new --user bob --ssh-key ~/.ssh/id_rsa.pub
 ./tdvirsh new --user charlie --ssh-key ~/.ssh/id_rsa.pub
+
+# Or use custom pool
+./tdvirsh new --user dave --ssh-key ~/.ssh/id_rsa.pub --pool my-custom-pool
 
 # List all
 ./tdvirsh list
